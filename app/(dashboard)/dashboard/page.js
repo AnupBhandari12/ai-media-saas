@@ -1,7 +1,42 @@
+import { auth } from "@clerk/nextjs/server";
+import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { ImageIcon, Video, ArrowRight } from "lucide-react";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+    const { userId } = await auth();
+
+    const [mediaCount, imageCount, videoCount, recentMedia] = await Promise.all([
+        prisma.media.count({
+            where: {
+                ownerId: userId,
+            },
+        }),
+
+        prisma.media.count({
+            where: {
+                ownerId: userId,
+                type: "IMAGE",
+            },
+        }),
+
+        prisma.media.count({
+            where: {
+                ownerId: userId,
+                type: "VIDEO",
+            },
+        }),
+
+        prisma.media.findMany({
+            where: {
+                ownerId: userId,
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+            take: 5,
+        }),
+    ]);
     return (
         <div>
             <div>
@@ -98,7 +133,7 @@ export default function DashboardPage() {
                         </p>
 
                         <p className="mt-3 text-3xl font-bold text-foreground">
-                            0
+                            {imageCount}
                         </p>
                     </div>
 
@@ -108,7 +143,7 @@ export default function DashboardPage() {
                         </p>
 
                         <p className="mt-3 text-3xl font-bold text-foreground">
-                            0
+                            {videoCount}
                         </p>
                     </div>
 
@@ -118,7 +153,7 @@ export default function DashboardPage() {
                         </p>
 
                         <p className="mt-3 text-3xl font-bold text-foreground">
-                            0
+                            {mediaCount}
                         </p>
                     </div>
 
@@ -145,35 +180,60 @@ export default function DashboardPage() {
                     </p>
                 </div>
 
-                <div className="rounded-2xl border border-dashed border-border bg-surface px-6 py-14 text-center">
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        <ImageIcon size={22} />
+                {recentMedia.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-border bg-surface px-6 py-14 text-center">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <ImageIcon size={22} />
+                        </div>
+
+                        <h3 className="mt-5 text-lg font-semibold text-foreground">
+                            No media yet
+                        </h3>
+
+                        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">
+                            Upload an image or video to start building your media library.
+                        </p>
+
+                        <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+                            <Link
+                                href="/studio/image"
+                                className="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-hover"
+                            >
+                                Upload Image
+                            </Link>
+
+                            <Link
+                                href="/studio/video"
+                                className="rounded-lg border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground transition hover:bg-slate-50"
+                            >
+                                Upload Video
+                            </Link>
+                        </div>
                     </div>
+                ) : (
+                    <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+                        {recentMedia.map((media) => (
+                            <div
+                                key={media.id}
+                                className="flex items-center justify-between border-b border-border px-5 py-4 last:border-b-0"
+                            >
+                                <div>
+                                    <p className="font-medium text-foreground">
+                                        {media.originalFilename}
+                                    </p>
 
-                    <h3 className="mt-5 text-lg font-semibold text-foreground">
-                        No media yet
-                    </h3>
+                                    <p className="mt-1 text-sm text-muted">
+                                        {media.type} · {media.status}
+                                    </p>
+                                </div>
 
-                    <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">
-                        Upload an image or video to start building your media library.
-                    </p>
-
-                    <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-                        <Link
-                            href="/studio/image"
-                            className="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-hover"
-                        >
-                            Upload Image
-                        </Link>
-
-                        <Link
-                            href="/studio/video"
-                            className="rounded-lg border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground transition hover:bg-slate-50"
-                        >
-                            Upload Video
-                        </Link>
+                                <span className="text-xs font-semibold text-muted">
+                                    {media.format || "—"}
+                                </span>
+                            </div>
+                        ))}
                     </div>
-                </div>
+                )}
             </section>
         </div>
     );
