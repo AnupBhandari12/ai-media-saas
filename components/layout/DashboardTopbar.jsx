@@ -1,5 +1,6 @@
 "use client";
 
+import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -41,9 +42,13 @@ export default function DashboardTopbar() {
             </div>
           </div>
 
-          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-            Free Beta
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="hidden rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary sm:inline-flex">
+              Free Beta
+            </span>
+
+            <UserButton afterSignOutUrl="/" />
+          </div>
         </div>
       </header>
 
@@ -63,13 +68,9 @@ export default function DashboardTopbar() {
       >
         <div className="flex items-center justify-between border-b border-border px-6 py-5">
           <div>
-            <p className="text-xl font-bold text-foreground">
-              AI Media
-            </p>
+            <p className="text-xl font-bold text-foreground">AI Media</p>
 
-            <p className="mt-1 text-xs text-muted">
-              Media workspace
-            </p>
+            <p className="mt-1 text-xs text-muted">Media workspace</p>
           </div>
 
           <button

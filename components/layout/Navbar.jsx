@@ -1,5 +1,5 @@
 "use client";
-
+import { Show, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
@@ -30,19 +30,32 @@ export default function Navbar() {
             Pricing
           </Link>
 
-          <Link
-            href="/sign-in"
-            className="text-sm font-medium text-muted transition hover:text-foreground"
-          >
-            Sign in
-          </Link>
+          <Show when="signed-out">
+            <Link
+              href="/sign-in"
+              className="text-sm font-medium text-muted transition hover:text-foreground"
+            >
+              Sign in
+            </Link>
 
-          <Link
-            href="/sign-up"
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
-          >
-            Get Started
-          </Link>
+            <Link
+              href="/sign-up"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
+            >
+              Get Started
+            </Link>
+          </Show>
+
+          <Show when="signed-in">
+            <Link
+              href="/dashboard"
+              className="text-sm font-medium text-muted transition hover:text-foreground"
+            >
+              Dashboard
+            </Link>
+
+            <UserButton afterSignOutUrl="/" />
+          </Show>
         </nav>
 
         {/* Mobile menu button */}
@@ -77,21 +90,37 @@ export default function Navbar() {
               Pricing
             </Link>
 
-            <Link
-              href="/sign-in"
-              onClick={() => setMenuOpen(false)}
-              className="text-sm font-medium text-muted"
-            >
-              Sign in
-            </Link>
+            <Show when="signed-out">
+              <Link
+                href="/sign-in"
+                onClick={() => setMenuOpen(false)}
+                className="text-sm font-medium text-muted"
+              >
+                Sign in
+              </Link>
 
-            <Link
-              href="/sign-up"
-              onClick={() => setMenuOpen(false)}
-              className="rounded-lg bg-primary px-4 py-3 text-center text-sm font-semibold text-white"
-            >
-              Get Started
-            </Link>
+              <Link
+                href="/sign-up"
+                onClick={() => setMenuOpen(false)}
+                className="rounded-lg bg-primary px-4 py-3 text-center text-sm font-semibold text-white"
+              >
+                Get Started
+              </Link>
+            </Show>
+
+            <Show when="signed-in">
+              <Link
+                href="/dashboard"
+                onClick={() => setMenuOpen(false)}
+                className="text-sm font-medium text-muted"
+              >
+                Dashboard
+              </Link>
+
+              <div className="pt-1">
+                <UserButton afterSignOutUrl="/" />
+              </div>
+            </Show>
           </div>
         </nav>
       )}

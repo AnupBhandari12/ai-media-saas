@@ -1,7 +1,11 @@
+import { auth } from "@clerk/nextjs/server";
+
 import DashboardSidebar from "@/components/layout/DashboardSidebar";
 import DashboardTopbar from "@/components/layout/DashboardTopbar";
 
-export default function DashboardLayout({ children }) {
+export default async function DashboardLayout({ children }) {
+  await auth.protect();
+
   return (
     <div className="min-h-screen bg-background lg:flex">
       <DashboardSidebar />
