@@ -65,21 +65,28 @@ describe("tool registry", () => {
     expect(imageTools).toHaveLength(10);
   });
 
-  test("IMG-01 is available and remaining tools are coming soon", () => {
-    const compressImageTool = getToolById("IMG-01");
+  test("completed tools are available and remaining tools are coming soon", () => {
+  const availableToolIds = [
+    "IMG-01",
+    "IMG-02",
+  ];
 
-    expect(compressImageTool?.status).toBe(
+  for (const toolId of availableToolIds) {
+    const tool = getToolById(toolId);
+
+    expect(tool?.status).toBe(
       TOOL_STATUS.AVAILABLE
     );
+  }
 
-    const unfinishedTools = tools.filter(
-      (tool) => tool.id !== "IMG-01"
+  const unfinishedTools = tools.filter(
+    (tool) => !availableToolIds.includes(tool.id)
+  );
+
+  for (const tool of unfinishedTools) {
+    expect(tool.status).toBe(
+      TOOL_STATUS.COMING_SOON
     );
-
-    for (const tool of unfinishedTools) {
-      expect(tool.status).toBe(
-        TOOL_STATUS.COMING_SOON
-      );
-    }
-  });
+  }
+});
 });
