@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CldImage, CldUploadWidget } from "next-cloudinary";
 import { Upload } from "lucide-react";
+import ImageTransformer from "@/components/studio/ImageTransformer";
 
 export default function ImageUploader({ initialImage = null }) {
   const [uploadedImage, setUploadedImage] = useState(initialImage);
@@ -18,6 +19,8 @@ export default function ImageUploader({ initialImage = null }) {
           resourceType: "image",
           clientAllowedFormats: ["jpg", "jpeg", "png", "webp", "avif"],
           maxFileSize: 10_000_000,
+          maxImageWidth: 4096,
+          maxImageHeight: 4096,
           folder: "ai-media/images",
         }}
         onSuccess={async (result, { widget }) => {
@@ -101,6 +104,7 @@ export default function ImageUploader({ initialImage = null }) {
           </div>
         </div>
       )}
+      {uploadedImage && <ImageTransformer image={uploadedImage} />}
     </div>
   );
 }
