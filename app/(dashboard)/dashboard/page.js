@@ -213,9 +213,12 @@ export default async function DashboardPage() {
                 ) : (
                     <div className="overflow-hidden rounded-2xl border border-border bg-surface">
                         {recentMedia.map((media) => (
-                            <div
+                            <a
                                 key={media.id}
-                                className="flex items-center justify-between border-b border-border px-5 py-4 last:border-b-0"
+                                href={media.secureUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-between border-b border-border px-5 py-4 transition hover:bg-background last:border-b-0"
                             >
                                 <div>
                                     <p className="font-medium text-foreground">
@@ -230,7 +233,7 @@ export default async function DashboardPage() {
                                 <span className="text-xs font-semibold text-muted">
                                     {media.format || "—"}
                                 </span>
-                            </div>
+                            </a>
                         ))}
                     </div>
                 )}
