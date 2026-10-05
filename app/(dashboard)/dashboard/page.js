@@ -1,7 +1,12 @@
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { ImageIcon, Video, ArrowRight } from "lucide-react";
+import {
+    Wrench,
+    ImageIcon,
+    Video,
+    ArrowRight,
+} from "lucide-react";
 import MonthlyUsage from "@/components/dashboard/MonthlyUsage";
 
 export default async function DashboardPage() {
@@ -61,7 +66,32 @@ export default async function DashboardPage() {
                     </p>
                 </div>
 
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                    <Link
+                        href="/tools"
+                        className="group rounded-2xl border border-border bg-surface p-6 transition hover:border-primary/40 hover:shadow-sm"
+                    >
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <Wrench size={20} />
+                        </div>
+
+                        <h3 className="mt-5 text-lg font-semibold text-foreground">
+                            Tools Hub
+                        </h3>
+
+                        <p className="mt-2 text-sm leading-6 text-muted">
+                            Explore image, PDF, video, audio, document, and AI tools from one workspace.
+                        </p>
+
+                        <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-primary">
+                            Browse Tools
+
+                            <ArrowRight
+                                size={16}
+                                className="transition group-hover:translate-x-1"
+                            />
+                        </div>
+                    </Link>
                     <Link
                         href="/studio/image"
                         className="group rounded-2xl border border-border bg-surface p-6 transition hover:border-primary/40 hover:shadow-sm"

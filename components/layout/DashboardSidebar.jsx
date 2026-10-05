@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   LayoutDashboard,
+  Wrench,
   ImageIcon,
   Video,
   Library,
@@ -15,9 +16,7 @@ export default function DashboardSidebar() {
           AI Media
         </Link>
 
-        <p className="mt-1 text-xs text-muted">
-          Media workspace
-        </p>
+        <p className="mt-1 text-xs text-muted">Media workspace</p>
       </div>
 
       <nav className="flex flex-1 flex-col gap-1 p-4">
@@ -27,6 +26,14 @@ export default function DashboardSidebar() {
         >
           <LayoutDashboard size={18} />
           Dashboard
+        </Link>
+
+        <Link
+          href="/tools"
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-background hover:text-foreground"
+        >
+          <Wrench size={18} />
+          Tools
         </Link>
 
         <Link

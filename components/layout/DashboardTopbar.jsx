@@ -7,6 +7,7 @@ import {
   Menu,
   X,
   LayoutDashboard,
+  Wrench,
   ImageIcon,
   Video,
   Library,
@@ -91,6 +92,14 @@ export default function DashboardTopbar() {
           >
             <LayoutDashboard size={18} />
             Dashboard
+          </Link>
+          <Link
+            href="/tools"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted"
+          >
+            <Wrench size={18} />
+            Tools
           </Link>
 
           <Link

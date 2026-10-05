@@ -15,12 +15,24 @@ datasource db {
 enum MediaType {
   IMAGE
   VIDEO
+  AUDIO
+  PDF
+  DOCUMENT
+  OTHER
 }
 
 enum MediaStatus {
   PENDING
   READY
   FAILED
+}
+
+enum ProcessingJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
 }
 
 model Media {
@@ -33,15 +45,109 @@ model Media {
   cloudinaryPublicId String @unique
   secureUrl          String
 
-  format   String?
-  bytes    Int?
-  width    Int?
-  height   Int?
-  duration Float?
+  format          String?
+  mimeType        String?
+  bytes           Int?
+  sourceSize      Int?
+  width           Int?
+  height          Int?
+  duration        Float?
+  storageProvider String?
+
+  generatedAssets GeneratedAsset[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([ownerId])
   @@index([ownerId, createdAt])
+}
+
+model GeneratedAsset {
+  id      String @id @default(cuid())
+  ownerId String
+
+  sourceMediaId String?
+  jobId         String?
+
+  kind     String
+  format   String?
+  mimeType String?
+  bytes    Int?
+
+  width    Int?
+  height   Int?
+  duration Float?
+  pages    Int?
+
+  storageProvider String?
+  storageKey      String?
+  secureUrl       String?
+
+  expiresAt DateTime?
+  saved     Boolean   @default(false)
+
+  sourceMedia Media?         @relation(fields: [sourceMediaId], references: [id], onDelete: SetNull)
+  job         ProcessingJob? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId])
+  @@index([sourceMediaId])
+  @@index([jobId])
+  @@index([ownerId, createdAt])
+}
+
+model ProcessingJob {
+  id      String @id @default(cuid())
+  ownerId String
+
+  toolId     String?
+  workflowId String?
+
+  status   ProcessingJobStatus @default(PENDING)
+  progress Int                 @default(0)
+
+  inputRefs  Json?
+  resultRefs Json?
+
+  errorCode    String?
+  errorMessage String?
+
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  generatedAssets GeneratedAsset[]
+  usageEvents     UsageEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId])
+  @@index([ownerId, status])
+  @@index([toolId])
+  @@index([workflowId])
+  @@index([createdAt])
+}
+
+model UsageEvent {
+  id      String @id @default(cuid())
+  ownerId String
+
+  quotaKey String
+  units    Int    @default(1)
+
+  toolId String?
+  jobId  String?
+
+  job ProcessingJob? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+
+  occurredAt DateTime @default(now())
+
+  @@index([ownerId])
+  @@index([quotaKey])
+  @@index([toolId])
+  @@index([jobId])
+  @@index([ownerId, occurredAt])
 }
