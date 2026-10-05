@@ -65,8 +65,18 @@ describe("tool registry", () => {
     expect(imageTools).toHaveLength(10);
   });
 
-  test("unfinished tools are marked coming soon", () => {
-    for (const tool of tools) {
+  test("IMG-01 is available and remaining tools are coming soon", () => {
+    const compressImageTool = getToolById("IMG-01");
+
+    expect(compressImageTool?.status).toBe(
+      TOOL_STATUS.AVAILABLE
+    );
+
+    const unfinishedTools = tools.filter(
+      (tool) => tool.id !== "IMG-01"
+    );
+
+    for (const tool of unfinishedTools) {
       expect(tool.status).toBe(
         TOOL_STATUS.COMING_SOON
       );

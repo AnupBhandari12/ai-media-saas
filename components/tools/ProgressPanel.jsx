@@ -1,9 +1,4 @@
-import {
-  CheckCircle2,
-  CircleAlert,
-  Clock3,
-  Loader2,
-} from "lucide-react";
+import { CheckCircle2, CircleAlert, Clock3, Loader2 } from "lucide-react";
 
 const statusConfig = {
   IDLE: {
@@ -31,16 +26,13 @@ export default function ProgressPanel({
   status = "IDLE",
   progress = 0,
   message = "Ready to process your file.",
+  showProgress = true,
 }) {
-  const config =
-    statusConfig[status] || statusConfig.IDLE;
+  const config = statusConfig[status] || statusConfig.IDLE;
 
   const Icon = config.icon;
 
-  const safeProgress = Math.min(
-    100,
-    Math.max(0, Number(progress) || 0)
-  );
+  const safeProgress = Math.min(100, Math.max(0, Number(progress) || 0));
 
   return (
     <div className="rounded-2xl border border-border bg-surface p-5">
@@ -48,26 +40,18 @@ export default function ProgressPanel({
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
           <Icon
             size={19}
-            className={
-              status === "PROCESSING"
-                ? "animate-spin"
-                : ""
-            }
+            className={status === "PROCESSING" ? "animate-spin" : ""}
           />
         </div>
 
         <div className="min-w-0">
-          <p className="font-semibold text-foreground">
-            {config.label}
-          </p>
+          <p className="font-semibold text-foreground">{config.label}</p>
 
-          <p className="mt-1 text-sm text-muted">
-            {message}
-          </p>
+          <p className="mt-1 text-sm text-muted">{message}</p>
         </div>
       </div>
 
-      {status === "PROCESSING" && (
+      {status === "PROCESSING" && showProgress && (
         <div className="mt-5">
           <div className="mb-2 flex items-center justify-between text-xs text-muted">
             <span>Progress</span>
