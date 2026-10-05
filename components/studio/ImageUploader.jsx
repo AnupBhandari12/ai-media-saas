@@ -1,13 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CldImage, CldUploadWidget } from "next-cloudinary";
 import { Upload } from "lucide-react";
+
 import ImageTransformer from "@/components/studio/ImageTransformer";
 
-export default function ImageUploader({ initialImage = null }) {
+export default function ImageUploader({ initialImage = null, uploadFolder }) {
   const [uploadedImage, setUploadedImage] = useState(initialImage);
   const [saveError, setSaveError] = useState("");
+
+  const [imageUsage, setImageUsage] = useState(null);
+  const [quotaLoading, setQuotaLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadUsage() {
+      try {
+        const response = await fetch("/api/usage");
+        const data = await response.json();
+
+        if (response.ok) {
+          setImageUsage(data.images);
+        }
+      } catch (error) {
+        console.error("Failed to load image usage:", error);
+      } finally {
+        setQuotaLoading(false);
+      }
+    }
+
+    loadUsage();
+  }, []);
+
+  const imageLimitReached = imageUsage?.remaining === 0;
 
   return (
     <div>
@@ -21,7 +46,7 @@ export default function ImageUploader({ initialImage = null }) {
           maxFileSize: 10_000_000,
           maxImageWidth: 4096,
           maxImageHeight: 4096,
-          folder: "ai-media/images",
+          folder: uploadFolder,
         }}
         onSuccess={async (result, { widget }) => {
           if (typeof result?.info === "string") {
@@ -41,6 +66,7 @@ export default function ImageUploader({ initialImage = null }) {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
+                type: "IMAGE",
                 originalFilename: info.original_filename,
                 cloudinaryPublicId: info.public_id,
                 secureUrl: info.secure_url,
@@ -56,6 +82,18 @@ export default function ImageUploader({ initialImage = null }) {
             if (!response.ok) {
               throw new Error(data.error || "Failed to save media.");
             }
+
+            setImageUsage((currentUsage) => {
+              if (!currentUsage) {
+                return currentUsage;
+              }
+
+              return {
+                ...currentUsage,
+                used: currentUsage.used + 1,
+                remaining: Math.max(currentUsage.remaining - 1, 0),
+              };
+            });
           } catch (error) {
             console.error(error);
 
@@ -69,13 +107,25 @@ export default function ImageUploader({ initialImage = null }) {
           <button
             type="button"
             onClick={() => open()}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 font-semibold text-white transition hover:bg-primary-hover"
+            disabled={quotaLoading || imageLimitReached}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 font-semibold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Upload size={18} />
-            Upload Image
+
+            {imageLimitReached ? "Monthly Image Limit Reached" : "Upload Image"}
           </button>
         )}
       </CldUploadWidget>
+
+      {imageUsage && (
+        <p
+          className={`mt-3 text-sm ${
+            imageLimitReached ? "font-medium text-red-600" : "text-muted"
+          }`}
+        >
+          {imageUsage.used} / {imageUsage.limit} image uploads used this month
+        </p>
+      )}
 
       {saveError && (
         <p className="mt-4 text-sm font-medium text-red-600">{saveError}</p>
@@ -104,6 +154,7 @@ export default function ImageUploader({ initialImage = null }) {
           </div>
         </div>
       )}
+
       {uploadedImage && <ImageTransformer image={uploadedImage} />}
     </div>
   );

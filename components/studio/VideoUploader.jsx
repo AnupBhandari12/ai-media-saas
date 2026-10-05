@@ -1,13 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CldUploadWidget } from "next-cloudinary";
 import { Upload } from "lucide-react";
+
 import VideoOptimizer from "@/components/studio/VideoOptimizer";
 
-export default function VideoUploader({ initialVideo = null }) {
+export default function VideoUploader({ initialVideo = null, uploadFolder }) {
   const [uploadedVideo, setUploadedVideo] = useState(initialVideo);
   const [saveError, setSaveError] = useState("");
+
+  const [videoUsage, setVideoUsage] = useState(null);
+  const [quotaLoading, setQuotaLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadUsage() {
+      try {
+        const response = await fetch("/api/usage");
+        const data = await response.json();
+
+        if (response.ok) {
+          setVideoUsage(data.videos);
+        }
+      } catch (error) {
+        console.error("Failed to load video usage:", error);
+      } finally {
+        setQuotaLoading(false);
+      }
+    }
+
+    loadUsage();
+  }, []);
+
+  const videoLimitReached = videoUsage?.remaining === 0;
 
   return (
     <div>
@@ -19,7 +44,7 @@ export default function VideoUploader({ initialVideo = null }) {
           resourceType: "video",
           clientAllowedFormats: ["mp4", "mov", "webm"],
           maxFileSize: 50_000_000,
-          folder: "ai-media/videos",
+          folder: uploadFolder,
         }}
         onSuccess={async (result, { widget }) => {
           if (typeof result?.info === "string") {
@@ -56,6 +81,18 @@ export default function VideoUploader({ initialVideo = null }) {
             if (!response.ok) {
               throw new Error(data.error || "Failed to save video.");
             }
+
+            setVideoUsage((currentUsage) => {
+              if (!currentUsage) {
+                return currentUsage;
+              }
+
+              return {
+                ...currentUsage,
+                used: currentUsage.used + 1,
+                remaining: Math.max(currentUsage.remaining - 1, 0),
+              };
+            });
           } catch (error) {
             console.error(error);
 
@@ -69,13 +106,25 @@ export default function VideoUploader({ initialVideo = null }) {
           <button
             type="button"
             onClick={() => open()}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 font-semibold text-white transition hover:bg-primary-hover"
+            disabled={quotaLoading || videoLimitReached}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 font-semibold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Upload size={18} />
-            Upload Video
+
+            {videoLimitReached ? "Monthly Video Limit Reached" : "Upload Video"}
           </button>
         )}
       </CldUploadWidget>
+
+      {videoUsage && (
+        <p
+          className={`mt-3 text-sm ${
+            videoLimitReached ? "font-medium text-red-600" : "text-muted"
+          }`}
+        >
+          {videoUsage.used} / {videoUsage.limit} video uploads used this month
+        </p>
+      )}
 
       {saveError && (
         <p className="mt-4 text-sm font-medium text-red-600">{saveError}</p>
@@ -96,9 +145,11 @@ export default function VideoUploader({ initialVideo = null }) {
 
             <p className="mt-1 text-sm text-muted">
               {uploadedVideo.format?.toUpperCase()}
+
               {uploadedVideo.duration
                 ? ` · ${uploadedVideo.duration.toFixed(1)} sec`
                 : ""}
+
               {uploadedVideo.bytes
                 ? ` · ${(uploadedVideo.bytes / 1024 / 1024).toFixed(2)} MB`
                 : ""}
@@ -106,6 +157,7 @@ export default function VideoUploader({ initialVideo = null }) {
           </div>
         </div>
       )}
+
       {uploadedVideo && <VideoOptimizer video={uploadedVideo} />}
     </div>
   );

@@ -8,26 +8,26 @@ export default async function ImageStudioPage() {
 
   const latestImage = userId
     ? await prisma.media.findFirst({
-        where: {
-          ownerId: userId,
-          type: "IMAGE",
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      })
+      where: {
+        ownerId: userId,
+        type: "IMAGE",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
     : null;
 
   const initialImage = latestImage
     ? {
-        public_id: latestImage.cloudinaryPublicId,
-        secure_url: latestImage.secureUrl,
-        original_filename: latestImage.originalFilename,
-        format: latestImage.format,
-        bytes: latestImage.bytes,
-        width: latestImage.width,
-        height: latestImage.height,
-      }
+      public_id: latestImage.cloudinaryPublicId,
+      secure_url: latestImage.secureUrl,
+      original_filename: latestImage.originalFilename,
+      format: latestImage.format,
+      bytes: latestImage.bytes,
+      width: latestImage.width,
+      height: latestImage.height,
+    }
     : null;
 
   return (
@@ -54,7 +54,10 @@ export default async function ImageStudioPage() {
           </p>
 
           <div className="mt-6">
-            <ImageUploader initialImage={initialImage} />
+            <ImageUploader
+              initialImage={initialImage}
+              uploadFolder={`ai-media/${userId}/images`}
+            />
           </div>
         </div>
       </section>

@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { ImageIcon, Video, ArrowRight } from "lucide-react";
+import MonthlyUsage from "@/components/dashboard/MonthlyUsage";
 
 export default async function DashboardPage() {
     const { userId } = await auth();
@@ -125,6 +126,11 @@ export default async function DashboardPage() {
                         Your current media activity.
                     </p>
                 </div>
+
+                <div className="mt-4">
+                    <MonthlyUsage />
+                </div>
+
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <div className="rounded-2xl border border-border bg-surface p-5">

@@ -8,27 +8,27 @@ export default async function VideoStudioPage() {
 
   const latestVideo = userId
     ? await prisma.media.findFirst({
-        where: {
-          ownerId: userId,
-          type: "VIDEO",
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      })
+      where: {
+        ownerId: userId,
+        type: "VIDEO",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
     : null;
 
   const initialVideo = latestVideo
     ? {
-        public_id: latestVideo.cloudinaryPublicId,
-        secure_url: latestVideo.secureUrl,
-        original_filename: latestVideo.originalFilename,
-        format: latestVideo.format,
-        bytes: latestVideo.bytes,
-        width: latestVideo.width,
-        height: latestVideo.height,
-        duration: latestVideo.duration,
-      }
+      public_id: latestVideo.cloudinaryPublicId,
+      secure_url: latestVideo.secureUrl,
+      original_filename: latestVideo.originalFilename,
+      format: latestVideo.format,
+      bytes: latestVideo.bytes,
+      width: latestVideo.width,
+      height: latestVideo.height,
+      duration: latestVideo.duration,
+    }
     : null;
 
   return (
@@ -55,7 +55,10 @@ export default async function VideoStudioPage() {
           </p>
 
           <div className="mt-6">
-            <VideoUploader initialVideo={initialVideo} />
+            <VideoUploader
+              initialVideo={initialVideo}
+              uploadFolder={`ai-media/${userId}/videos`}
+            />
           </div>
         </div>
       </section>
