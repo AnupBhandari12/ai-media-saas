@@ -10,17 +10,30 @@ export default function Navbar() {
   return (
     <header className="border-b border-border bg-surface">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link href="/" className="text-xl font-bold text-foreground">
-          AI Media
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xl font-bold text-foreground"
+        >
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-sm font-bold text-white">
+            AI
+          </span>
+
+          <span>AI Media</span>
         </Link>
 
         {/* Desktop navigation */}
         <nav className="hidden items-center gap-8 md:flex">
           <a
-            href="#features"
+            href="#how-it-works"
             className="text-sm font-medium text-muted transition hover:text-foreground"
           >
-            Features
+            Categories
+          </a>
+          <a
+            href="#tools"
+            className="text-sm font-medium text-muted transition hover:text-foreground"
+          >
+            Tools
           </a>
 
           <Link
@@ -75,11 +88,19 @@ export default function Navbar() {
         <nav className="border-t border-border bg-surface px-6 py-5 md:hidden">
           <div className="flex flex-col gap-4">
             <a
-              href="#features"
+              href="#tools"
               onClick={() => setMenuOpen(false)}
               className="text-sm font-medium text-muted"
             >
-              Features
+              Tools
+            </a>
+
+            <a
+              href="#how-it-works"
+              onClick={() => setMenuOpen(false)}
+              className="text-sm font-medium text-muted"
+            >
+              Categories
             </a>
 
             <Link

@@ -1,26 +1,39 @@
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
+import { tools, TOOL_STATUS } from "@/lib/tools/registry";
 
 export default function Home() {
   return (
     <main className="min-h-screen">
       <Navbar />
-      
 
-      <section className="px-6 py-24">
-        <div className="mx-auto grid max-w-7xl items-center gap-16 lg:grid-cols-2">
+
+      <section className="px-6 py-20 sm:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-primary">
-              AI-powered media toolkit
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5">
+              <span className="h-2 w-2 rounded-full bg-secondary" />
+
+              <span className="text-xs font-semibold text-foreground">
+                Free Beta · Professional everyday tools
+              </span>
+            </div>
+
+            <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-primary">
+              Media + PDF + document toolbox
             </p>
 
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Optimize images and videos without complicated editing tools.
+            <h1 className="mt-4 max-w-4xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              Upload once.
+              <span className="block text-primary">
+                Make it ready for anything.
+              </span>
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">
-              Upload your media, create social-ready images, optimize videos,
-              preview results, and manage everything from one simple workspace.
+              Prepare images, videos, PDFs, audio, documents, and creator assets
+              from one simple workspace. Use fast everyday tools without jumping
+              between different websites.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -32,239 +45,520 @@ export default function Home() {
               </Link>
 
               <a
-                href="#features"
+                href="#tools"
                 className="rounded-lg border border-border bg-surface px-6 py-3 text-center font-semibold text-foreground transition hover:bg-slate-50"
               >
-                Explore Features
+                Explore Tools
               </a>
+            </div>
+
+            <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted">
+              <span>No credit card</span>
+              <span>•</span>
+              <span>Mobile friendly</span>
+              <span>•</span>
+              <span>Browser-first where possible</span>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
-            <div className="mb-6 flex items-center justify-between">
+          <div className="rounded-3xl border border-border bg-surface p-5 shadow-sm sm:p-6">
+            <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold text-foreground">
-                  Media Preview
+                  AI Media Workspace
                 </p>
 
                 <p className="mt-1 text-sm text-muted">
-                  Smart optimization preview
+                  One place for everyday file work
+                </p>
+              </div>
+
+              <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-semibold text-secondary">
+                Free Beta
+              </span>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-border bg-background p-5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted">
+                Available now
+              </p>
+
+              <div className="mt-4 space-y-3">
+                <div className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      Image Studio
+                    </p>
+
+                    <p className="mt-1 text-xs text-muted">
+                      Upload · Smart crop · Presets · Download
+                    </p>
+                  </div>
+
+                  <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                    Live
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      Video Studio
+                    </p>
+
+                    <p className="mt-1 text-xs text-muted">
+                      Upload · Optimize · Preview · Download
+                    </p>
+                  </div>
+
+                  <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                    Live
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      Media Library
+                    </p>
+
+                    <p className="mt-1 text-xs text-muted">
+                      Private files · Filters · Download · Delete
+                    </p>
+                  </div>
+
+                  <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                    Live
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-2xl border border-dashed border-border p-5">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted">
+                    Expanding next
+                  </p>
+
+                  <p className="mt-2 text-sm font-medium leading-6 text-foreground">
+                    Image utilities · PDF tools · Audio · Creator tools · AI workflows
+                  </p>
+                </div>
+
+                <span className="shrink-0 rounded-full bg-background px-3 py-1 text-xs font-semibold text-muted">
+                  Coming Soon
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <section
+        id="features"
+        className="border-t border-border bg-surface px-6 py-20 sm:py-24"
+      >
+        <div id="tools" className="mx-auto max-w-7xl scroll-mt-24">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+              Your everyday toolbox
+            </p>
+
+            <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Start with what works today. More tools are on the way.
+            </h2>
+
+            <p className="mt-4 text-lg leading-8 text-muted">
+              Use the tools already live in AI Media, and see what we are building
+              next across images, PDFs, video, audio, creator work, and AI.
+            </p>
+          </div>
+
+          {/* Available now */}
+          <div className="mt-12">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  Available Now
+                </p>
+
+                <p className="mt-1 text-sm text-muted">
+                  Working and tested in the current product.
                 </p>
               </div>
 
               <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                Optimized
+                Live
               </span>
             </div>
 
-            <div className="flex min-h-64 items-center justify-center rounded-xl bg-slate-100">
-              <div className="text-center">
-                <p className="font-semibold text-foreground">
-                  Before / After Preview
-                </p>
-
-                <p className="mt-2 text-sm text-muted">
-                  Your processed image or video will appear here.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-4">
-              <div className="rounded-xl border border-border p-4">
-                <p className="text-sm text-muted">Original</p>
-
-                <p className="mt-1 font-semibold text-foreground">
-                  12.4 MB
-                </p>
-              </div>
-
-              <div className="rounded-xl border border-border p-4">
-                <p className="text-sm text-muted">Optimized</p>
-
-                <p className="mt-1 font-semibold text-secondary">
-                  4.1 MB
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      <section id="features" className="border-t border-border bg-surface px-6 py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-              Everything in one workspace
-            </p>
-
-            <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Simple tools for everyday media work.
-            </h2>
-
-            <p className="mt-4 text-lg leading-8 text-muted">
-              Upload, optimize, preview, and manage your media without switching
-              between complicated editing applications.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            <article className="rounded-2xl border border-border bg-background p-6">
-              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary">
-                01
-              </div>
-
-              <h3 className="text-xl font-semibold text-foreground">
-                Image Studio
-              </h3>
-
-              <p className="mt-3 leading-7 text-muted">
-                Create social-ready images with smart cropping, optimized delivery,
-                and ready-to-use presets.
-              </p>
-
-              <p className="mt-6 text-sm font-semibold text-primary">
-                Smart crop · Resize · Optimize
-              </p>
-            </article>
-
-            <article className="rounded-2xl border border-border bg-background p-6">
-              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-secondary/10 text-sm font-bold text-secondary">
-                02
-              </div>
-
-              <h3 className="text-xl font-semibold text-foreground">
-                Video Studio
-              </h3>
-
-              <p className="mt-3 leading-7 text-muted">
-                Upload and optimize videos, generate thumbnails, preview results, and
-                reduce unnecessary file size.
-              </p>
-
-              <p className="mt-6 text-sm font-semibold text-secondary">
-                Compress · Preview · Download
-              </p>
-            </article>
-
-            <article className="rounded-2xl border border-border bg-background p-6">
-              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary">
-                03
-              </div>
-
-              <h3 className="text-xl font-semibold text-foreground">
-                Media Library
-              </h3>
-
-              <p className="mt-3 leading-7 text-muted">
-                Keep images and videos organized in your own private workspace and
-                access previous uploads whenever you need them.
-              </p>
-
-              <p className="mt-6 text-sm font-semibold text-primary">
-                Search · Filter · Manage
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-
-      <section  id="how-it-works" className="px-6 py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-              How it works
-            </p>
-
-            <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              From upload to optimized media in three steps.
-            </h2>
-
-            <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-muted">
-              Keep the workflow simple while Cloudinary handles the heavy media
-              processing behind the scenes.
-            </p>
-          </div>
-
-          <div className="mt-14 grid gap-8 md:grid-cols-3">
-            <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
-                1
-              </div>
-
-              <h3 className="mt-5 text-xl font-semibold text-foreground">
-                Upload
-              </h3>
-
-              <p className="mt-3 leading-7 text-muted">
-                Choose an image or video from your device and upload it securely.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-sm font-bold text-white">
-                2
-              </div>
-
-              <h3 className="mt-5 text-xl font-semibold text-foreground">
-                Optimize
-              </h3>
-
-              <p className="mt-3 leading-7 text-muted">
-                Smart Cloudinary transformations optimize, resize, crop, or preview
-                your media.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
-                3
-              </div>
-
-              <h3 className="mt-5 text-xl font-semibold text-foreground">
-                Download
-              </h3>
-
-              <p className="mt-3 leading-7 text-muted">
-                Preview the result, save it to your library, and download the final
-                optimized file.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="px-6 py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="rounded-3xl bg-foreground px-8 py-14 text-center sm:px-12">
-            <p className="text-sm font-semibold uppercase tracking-wider text-secondary">
-              Free public beta
-            </p>
-
-            <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Start optimizing your media without complicated editing software.
-            </h2>
-
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-300">
-              Create your workspace, upload your media, and try the core tools for
-              free during the beta.
-            </p>
-
-            <div className="mt-8">
+            <div className="mt-5 grid gap-5 md:grid-cols-3">
               <Link
-                href="/sign-up"
-                className="inline-flex rounded-lg bg-primary px-6 py-3 font-semibold text-white transition hover:bg-primary-hover"
+                href="/studio/image"
+                className="group rounded-2xl border border-border bg-background p-6 transition hover:border-primary/40 hover:shadow-sm"
               >
-                Get Started Free
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                    Image
+                  </span>
+
+                  <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                    Live
+                  </span>
+                </div>
+
+                <h3 className="mt-5 text-xl font-semibold text-foreground">
+                  Image Studio
+                </h3>
+
+                <p className="mt-3 text-sm leading-6 text-muted">
+                  Upload images, apply social-ready presets, use smart cropping,
+                  preview results, and download optimized files.
+                </p>
+
+                <p className="mt-6 text-sm font-semibold text-primary">
+                  Open Image Studio →
+                </p>
+              </Link>
+
+              <Link
+                href="/studio/video"
+                className="group rounded-2xl border border-border bg-background p-6 transition hover:border-secondary/40 hover:shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-secondary">
+                    Video
+                  </span>
+
+                  <span className="rounded-full bg-secondary/10 px-2.5 py-1 text-xs font-semibold text-secondary">
+                    Live
+                  </span>
+                </div>
+
+                <h3 className="mt-5 text-xl font-semibold text-foreground">
+                  Video Studio
+                </h3>
+
+                <p className="mt-3 text-sm leading-6 text-muted">
+                  Upload videos, optimize delivery, generate previews, and download
+                  processed media from one workspace.
+                </p>
+
+                <p className="mt-6 text-sm font-semibold text-secondary">
+                  Open Video Studio →
+                </p>
+              </Link>
+
+              <Link
+                href="/library"
+                className="group rounded-2xl border border-border bg-background p-6 transition hover:border-primary/40 hover:shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                    Workspace
+                  </span>
+
+                  <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                    Live
+                  </span>
+                </div>
+
+                <h3 className="mt-5 text-xl font-semibold text-foreground">
+                  Media Library
+                </h3>
+
+                <p className="mt-3 text-sm leading-6 text-muted">
+                  View your private uploaded media, filter files, open results,
+                  download them, or remove files you no longer need.
+                </p>
+
+                <p className="mt-6 text-sm font-semibold text-primary">
+                  Open Library →
+                </p>
               </Link>
             </div>
           </div>
+
+          {/* Popular tools */}
+          <div className="mt-16">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  Popular Tools
+                </p>
+
+                <p className="mt-1 text-sm text-muted">
+                  Daily-use tools being added to the AI Media toolbox.
+                </p>
+              </div>
+
+              <Link
+                href="/tools"
+                className="text-sm font-semibold text-primary transition hover:text-primary-hover"
+              >
+                View all tools →
+              </Link>
+            </div>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {tools.slice(0, 6).map((tool) => {
+                const isAvailable = tool.status === TOOL_STATUS.AVAILABLE;
+
+                const content = (
+                  <>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs font-semibold text-muted">
+                        {tool.id}
+                      </span>
+
+                      <span
+                        className={
+                          isAvailable
+                            ? "rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary"
+                            : "rounded-full bg-background px-2.5 py-1 text-xs font-semibold text-muted"
+                        }
+                      >
+                        {isAvailable ? "Available" : "Coming Soon"}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-4 font-semibold text-foreground">
+                      {tool.name}
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-6 text-muted">
+                      {tool.description}
+                    </p>
+
+                    <p
+                      className={`mt-5 text-sm font-semibold ${isAvailable ? "text-primary" : "text-muted"
+                        }`}
+                    >
+                      {isAvailable ? "Open Tool →" : "In development"}
+                    </p>
+                  </>
+                );
+
+                if (isAvailable) {
+                  return (
+                    <Link
+                      key={tool.id}
+                      href={tool.route}
+                      className="rounded-2xl border border-border bg-background p-5 transition hover:border-primary/40 hover:shadow-sm"
+                    >
+                      {content}
+                    </Link>
+                  );
+                }
+
+                return (
+                  <article
+                    key={tool.id}
+                    className="cursor-not-allowed rounded-2xl border border-border bg-background p-5 opacity-80"
+                  >
+                    {content}
+                  </article>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
+
+
+      <section id="how-it-works" className="px-6 py-20 sm:py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+              One workspace, many jobs
+            </p>
+
+            <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Tools organized around the work you actually need to finish.
+            </h2>
+
+            <p className="mt-4 text-lg leading-8 text-muted">
+              AI Media is growing beyond image and video editing into a practical
+              toolbox for files, documents, creator work, and AI-assisted workflows.
+            </p>
+          </div>
+
+          {/* Categories */}
+          <div className="mt-12">
+            <p className="text-sm font-semibold text-foreground">
+              Tool Categories
+            </p>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                {
+                  name: "Image",
+                  description: "Compress, resize, convert, crop, rotate, and prepare photos.",
+                  status: "Building",
+                },
+                {
+                  name: "PDF",
+                  description: "Merge, split, compress, convert, organize, and prepare PDFs.",
+                  status: "Coming Soon",
+                },
+                {
+                  name: "Video",
+                  description: "Optimize, compress, preview, and prepare videos for sharing.",
+                  status: "Live + Expanding",
+                },
+                {
+                  name: "Audio",
+                  description: "Convert, compress, extract, and prepare audio files.",
+                  status: "Coming Soon",
+                },
+                {
+                  name: "Creator",
+                  description: "Watermarks, social assets, brand-ready exports, and creator tools.",
+                  status: "Coming Soon",
+                },
+                {
+                  name: "Utility",
+                  description: "QR, metadata, OCR, file helpers, and everyday utilities.",
+                  status: "Coming Soon",
+                },
+                {
+                  name: "AI",
+                  description: "AI-assisted media, captions, document help, and smart workflows.",
+                  status: "Coming Soon",
+                },
+                {
+                  name: "Workspace",
+                  description: "Keep your source files and generated results organized together.",
+                  status: "Live",
+                },
+              ].map((category) => (
+                <article
+                  key={category.name}
+                  className="rounded-2xl border border-border bg-surface p-5"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-semibold text-foreground">
+                      {category.name}
+                    </h3>
+
+                    <span className="shrink-0 rounded-full bg-background px-2.5 py-1 text-xs font-semibold text-muted">
+                      {category.status}
+                    </span>
+                  </div>
+
+                  <p className="mt-3 text-sm leading-6 text-muted">
+                    {category.description}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          {/* Ready for */}
+          <div className="mt-16 rounded-3xl border border-border bg-surface p-6 sm:p-8">
+            <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+                  Ready for real life
+                </p>
+
+                <h3 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  Prepare one file for wherever it needs to go next.
+                </h3>
+
+                <p className="mt-4 leading-7 text-muted">
+                  Instead of learning different apps for every task, AI Media will
+                  help you prepare files for common destinations and requirements.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  "WhatsApp sharing",
+                  "Instagram & social media",
+                  "Website upload",
+                  "Email attachment",
+                  "Job application",
+                  "College / online forms",
+                  "YouTube publishing",
+                  "E-commerce listings",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3"
+                  >
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                      ✓
+                    </span>
+
+                    <span className="text-sm font-medium text-foreground">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      <section className="px-6 py-20 sm:py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="overflow-hidden rounded-3xl bg-foreground px-6 py-12 sm:px-10 sm:py-14 lg:px-14">
+            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div>
+                <div className="inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">
+                  Free Public Beta
+                </div>
+
+                <h2 className="mt-5 max-w-3xl text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                  One workspace for the file tasks you do every day.
+                </h2>
+
+                <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-300">
+                  Start with the tools already live today. New image, PDF, audio,
+                  creator, utility, and AI tools will be added progressively during
+                  the beta.
+                </p>
+
+                <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-300">
+                  <span>Core tools free during beta</span>
+                  <span>•</span>
+                  <span>No credit card</span>
+                  <span>•</span>
+                  <span>Fair-use limits for cloud and AI processing</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+                <Link
+                  href="/sign-up"
+                  className="rounded-lg bg-primary px-6 py-3 text-center font-semibold text-white transition hover:bg-primary-hover"
+                >
+                  Start Free
+                </Link>
+
+                <Link
+                  href="/tools"
+                  className="rounded-lg border border-white/20 px-6 py-3 text-center font-semibold text-white transition hover:bg-white/10"
+                >
+                  Explore Tools
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
       <footer className="border-t border-border bg-surface">
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-
             {/* Brand */}
             <div className="lg:col-span-2">
               <Link
@@ -279,14 +573,18 @@ export default function Home() {
               </Link>
 
               <p className="mt-5 max-w-md text-sm leading-7 text-muted">
-                Smart image and video tools for creators, students, and businesses.
-                Optimize, transform, preview, and manage your media from one simple
-                workspace.
+                A practical media, PDF, document, and AI toolbox for everyday file
+                work. Prepare, transform, organize, and download what you need from
+                one simple workspace.
               </p>
 
-              <div className="mt-6">
-                <span className="inline-flex rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+              <div className="mt-6 flex flex-wrap gap-2">
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                   Free Public Beta
+                </span>
+
+                <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold text-muted">
+                  More tools coming
                 </span>
               </div>
             </div>
@@ -298,6 +596,13 @@ export default function Home() {
               </h3>
 
               <div className="mt-5 flex flex-col gap-3 text-sm">
+                <Link
+                  href="/tools"
+                  className="text-muted transition hover:text-primary"
+                >
+                  Tools
+                </Link>
+
                 <a
                   href="#features"
                   className="text-muted transition hover:text-primary"
@@ -309,8 +614,15 @@ export default function Home() {
                   href="#how-it-works"
                   className="text-muted transition hover:text-primary"
                 >
-                  How it works
+                  Categories
                 </a>
+
+                <Link
+                  href="/pricing"
+                  className="text-muted transition hover:text-primary"
+                >
+                  Pricing
+                </Link>
 
                 <Link
                   href="/sign-in"
@@ -358,14 +670,13 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Bottom bar */}
           <div className="mt-12 flex flex-col gap-4 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
             <p>
               © 2026 AI Media. All rights reserved.
             </p>
 
             <p>
-              A product by{" "}
+              Built by{" "}
               <a
                 href="https://bhanavo-technologies-v1.vercel.app"
                 target="_blank"
