@@ -15,6 +15,7 @@ export async function POST(request) {
   const body = await request.json();
 
   const {
+    type = "IMAGE",
     originalFilename,
     cloudinaryPublicId,
     secureUrl,
@@ -22,7 +23,15 @@ export async function POST(request) {
     bytes,
     width,
     height,
+    duration,
   } = body;
+
+  if (!["IMAGE", "VIDEO"].includes(type)) {
+    return Response.json(
+      { error: "Invalid media type." },
+      { status: 400 }
+    );
+  }
 
   if (!originalFilename || !cloudinaryPublicId || !secureUrl) {
     return Response.json(
@@ -34,7 +43,7 @@ export async function POST(request) {
   const media = await prisma.media.create({
     data: {
       ownerId: userId,
-      type: "IMAGE",
+      type,
       status: "READY",
 
       originalFilename,
@@ -45,6 +54,7 @@ export async function POST(request) {
       bytes: bytes || null,
       width: width || null,
       height: height || null,
+      duration: duration || null,
     },
   });
 
