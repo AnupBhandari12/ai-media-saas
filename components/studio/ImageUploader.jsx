@@ -98,7 +98,9 @@ export default function ImageUploader({ initialImage = null, uploadFolder }) {
             console.error(error);
 
             setSaveError(
-              "Image uploaded successfully, but it could not be saved to your media library.",
+              error instanceof Error
+                ? error.message
+                : "Image uploaded successfully, but it could not be saved to your media library.",
             );
           }
         }}

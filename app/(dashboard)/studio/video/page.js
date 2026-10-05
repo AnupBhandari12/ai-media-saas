@@ -44,7 +44,7 @@ export default async function VideoStudioPage() {
         </p>
       </div>
 
-      <section className="mt-10 max-w-2xl">
+      <section className="mt-10 w-full max-w-5xl">
         <div className="rounded-2xl border border-border bg-surface p-6">
           <h2 className="text-lg font-semibold text-foreground">
             Upload video

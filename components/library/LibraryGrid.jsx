@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CldImage, getCldImageUrl, getCldVideoUrl } from "next-cloudinary";
 
-import { Download, ExternalLink, Trash2 } from "lucide-react";
+import { Download, ExternalLink, Loader2, Trash2 } from "lucide-react";
 
 function getDownloadUrl(item) {
   if (item.type === "IMAGE") {
@@ -24,6 +24,7 @@ export default function LibraryGrid({ media }) {
   const [mediaItems, setMediaItems] = useState(media);
   const [deletingId, setDeletingId] = useState(null);
   const [deleteError, setDeleteError] = useState("");
+  const isDeleting = deletingId !== null;
   const filteredMedia =
     filter === "ALL"
       ? mediaItems
@@ -152,7 +153,7 @@ export default function LibraryGrid({ media }) {
                     {(item.bytes / 1024 / 1024).toFixed(2)} MB
                   </p>
                 )}
-                <div className="mt-4 flex gap-2">
+                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                   <a
                     href={item.secureUrl}
                     target="_blank"
@@ -174,10 +175,15 @@ export default function LibraryGrid({ media }) {
                   <button
                     type="button"
                     onClick={() => handleDelete(item)}
-                    disabled={deletingId === item.id}
+                    disabled={isDeleting}
+                    aria-busy={deletingId === item.id}
                     className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    <Trash2 size={16} />
+                    {deletingId === item.id ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <Trash2 size={16} />
+                    )}
 
                     {deletingId === item.id ? "Deleting..." : "Delete"}
                   </button>

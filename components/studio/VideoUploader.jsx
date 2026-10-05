@@ -97,7 +97,9 @@ export default function VideoUploader({ initialVideo = null, uploadFolder }) {
             console.error(error);
 
             setSaveError(
-              "Video uploaded successfully, but it could not be saved to your media library.",
+              error instanceof Error
+                ? error.message
+                : "Video uploaded successfully, but it could not be saved to your media library.",
             );
           }
         }}
