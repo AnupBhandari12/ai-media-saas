@@ -66,27 +66,28 @@ describe("tool registry", () => {
   });
 
   test("completed tools are available and remaining tools are coming soon", () => {
-  const availableToolIds = [
-    "IMG-01",
-    "IMG-02",
-  ];
+    const availableToolIds = [
+      "IMG-01",
+      "IMG-02",
+      "IMG-03",
+    ];
 
-  for (const toolId of availableToolIds) {
-    const tool = getToolById(toolId);
+    for (const toolId of availableToolIds) {
+      const tool = getToolById(toolId);
 
-    expect(tool?.status).toBe(
-      TOOL_STATUS.AVAILABLE
+      expect(tool?.status).toBe(
+        TOOL_STATUS.AVAILABLE
+      );
+    }
+
+    const unfinishedTools = tools.filter(
+      (tool) => !availableToolIds.includes(tool.id)
     );
-  }
 
-  const unfinishedTools = tools.filter(
-    (tool) => !availableToolIds.includes(tool.id)
-  );
-
-  for (const tool of unfinishedTools) {
-    expect(tool.status).toBe(
-      TOOL_STATUS.COMING_SOON
-    );
-  }
-});
+    for (const tool of unfinishedTools) {
+      expect(tool.status).toBe(
+        TOOL_STATUS.COMING_SOON
+      );
+    }
+  });
 });
