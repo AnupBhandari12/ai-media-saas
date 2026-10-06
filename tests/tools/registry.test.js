@@ -10,7 +10,7 @@ import {
 
 describe("tool registry", () => {
   test("contains the first 10 tools", () => {
-    expect(tools).toHaveLength(10);
+    expect(tools).toHaveLength(12);
   });
 
   test("every tool has required fields", () => {
@@ -62,7 +62,7 @@ describe("tool registry", () => {
   test("can filter tools by category", () => {
     const imageTools = getToolsByCategory("IMAGE");
 
-    expect(imageTools).toHaveLength(10);
+    expect(imageTools).toHaveLength(12);
   });
 
   test("completed tools are available and remaining tools are coming soon", () => {
@@ -74,6 +74,8 @@ describe("tool registry", () => {
       "IMG-05",
       "IMG-08",
       "IMG-09",
+      "IMG-10",
+      "IMG-12",
     ];
 
     for (const toolId of availableToolIds) {
