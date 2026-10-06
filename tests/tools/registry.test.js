@@ -180,6 +180,9 @@ describe("tool registry", () => {
       "PDF-07",
       "PDF-08",
       "PDF-09",
+      "PDF-10",
+      "PDF-13",
+      "PDF-14",
     ];
 
     for (
