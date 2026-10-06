@@ -9,8 +9,8 @@ import {
 } from "../../lib/tools/registry.js";
 
 describe("tool registry", () => {
-  test("contains the first 10 tools", () => {
-    expect(tools).toHaveLength(12);
+  test("contains the registered image tools", () => {
+    expect(tools).toHaveLength(14);
   });
 
   test("every tool has required fields", () => {
@@ -62,7 +62,7 @@ describe("tool registry", () => {
   test("can filter tools by category", () => {
     const imageTools = getToolsByCategory("IMAGE");
 
-    expect(imageTools).toHaveLength(12);
+    expect(imageTools).toHaveLength(14);
   });
 
   test("completed tools are available and remaining tools are coming soon", () => {
@@ -75,7 +75,10 @@ describe("tool registry", () => {
       "IMG-08",
       "IMG-09",
       "IMG-10",
+      "IMG-11",
       "IMG-12",
+      "IMG-13",
+      "IMG-14",
     ];
 
     for (const toolId of availableToolIds) {
