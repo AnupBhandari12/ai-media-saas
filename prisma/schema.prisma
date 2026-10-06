@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -150,4 +148,28 @@ model UsageEvent {
   @@index([toolId])
   @@index([jobId])
   @@index([ownerId, occurredAt])
+}
+
+model BrandKit {
+  id      String @id @default(cuid())
+  ownerId String @unique
+
+  brandName      String?
+  primaryColor   String  @default("#4f46e5")
+  secondaryColor String  @default("#0891b2")
+
+  logoPublicId  String?
+  logoSecureUrl String?
+  logoFormat    String?
+  logoWidth     Int?
+  logoHeight    Int?
+
+  defaultWatermarkType     String  @default("TEXT")
+  defaultWatermarkText     String?
+  defaultWatermarkOpacity  Int     @default(25)
+  defaultWatermarkSize     Int     @default(20)
+  defaultWatermarkPosition String  @default("BOTTOM_RIGHT")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
