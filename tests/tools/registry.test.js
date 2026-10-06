@@ -15,8 +15,19 @@ import {
 describe("tool registry", () => {
   test("contains the registered tool catalog", () => {
     expect(tools).toHaveLength(
-      35
+      37
     );
+  });
+
+  test("can filter creator tools", () => {
+    const creatorTools =
+      getToolsByCategory(
+        "CREATOR"
+      );
+
+    expect(
+      creatorTools
+    ).toHaveLength(2);
   });
 
   test("every tool has required fields", () => {
@@ -187,6 +198,9 @@ describe("tool registry", () => {
       "PDF-17",
       "PDF-18",
       "PDF-19",
+
+      "CRT-01",
+      "CRT-02",
     ];
 
     for (
