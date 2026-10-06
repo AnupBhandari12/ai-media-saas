@@ -15,7 +15,7 @@ import {
 describe("tool registry", () => {
   test("contains the registered tool catalog", () => {
     expect(tools).toHaveLength(
-      40
+      42
     );
   });
 
@@ -27,7 +27,7 @@ describe("tool registry", () => {
 
     expect(
       creatorTools
-    ).toHaveLength(5);
+    ).toHaveLength(7);
   });
 
   test("every tool has required fields", () => {
@@ -204,6 +204,8 @@ describe("tool registry", () => {
       "CRT-03",
       "CRT-04",
       "CRT-05",
+      "CRT-06",
+      "CRT-07",
       
     ];
 
