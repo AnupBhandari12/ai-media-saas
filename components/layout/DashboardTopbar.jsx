@@ -1,8 +1,9 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useState } from "react";
+
 import {
   Menu,
   X,
@@ -13,6 +14,20 @@ import {
   Library,
   Settings,
 } from "lucide-react";
+
+const ClerkUserButton = dynamic(
+  () => import("@clerk/nextjs").then((module) => module.UserButton),
+  {
+    ssr: false,
+
+    loading: () => (
+      <div
+        className="h-8 w-8 rounded-full border border-border bg-background"
+        aria-hidden="true"
+      />
+    ),
+  },
+);
 
 export default function DashboardTopbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -48,12 +63,11 @@ export default function DashboardTopbar() {
               Free Beta
             </span>
 
-            <UserButton afterSignOutUrl="/" />
+            <ClerkUserButton afterSignOutUrl="/" />
           </div>
         </div>
       </header>
 
-      {/* Mobile overlay */}
       {menuOpen && (
         <div
           className="fixed inset-0 z-40 bg-slate-950/40 lg:hidden"
@@ -61,7 +75,6 @@ export default function DashboardTopbar() {
         />
       )}
 
-      {/* Mobile sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-72 bg-surface shadow-xl transition-transform duration-200 lg:hidden ${
           menuOpen ? "translate-x-0" : "-translate-x-full"
@@ -93,6 +106,7 @@ export default function DashboardTopbar() {
             <LayoutDashboard size={18} />
             Dashboard
           </Link>
+
           <Link
             href="/tools"
             onClick={() => setMenuOpen(false)}

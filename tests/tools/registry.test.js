@@ -72,6 +72,8 @@ describe("tool registry", () => {
       "IMG-03",
       "IMG-04",
       "IMG-05",
+      "IMG-06",
+      "IMG-07",
       "IMG-08",
       "IMG-09",
       "IMG-10",
