@@ -70,6 +70,8 @@ describe("tool registry", () => {
       "IMG-01",
       "IMG-02",
       "IMG-03",
+      "IMG-04",
+      "IMG-05",
     ];
 
     for (const toolId of availableToolIds) {
