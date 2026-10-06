@@ -1,4 +1,8 @@
-import { describe, expect, test } from "bun:test";
+import {
+  describe,
+  expect,
+  test,
+} from "bun:test";
 
 import {
   TOOL_STATUS,
@@ -9,60 +13,143 @@ import {
 } from "../../lib/tools/registry.js";
 
 describe("tool registry", () => {
-  test("contains the registered image tools", () => {
-    expect(tools).toHaveLength(16);
+  test("contains the registered tool catalog", () => {
+    expect(tools).toHaveLength(
+      35
+    );
   });
 
   test("every tool has required fields", () => {
     for (const tool of tools) {
-      expect(tool.id).toBeTruthy();
-      expect(tool.slug).toBeTruthy();
-      expect(tool.name).toBeTruthy();
-      expect(tool.category).toBeTruthy();
-      expect(tool.route).toBeTruthy();
-      expect(tool.engine).toBeTruthy();
-      expect(tool.inputTypes.length).toBeGreaterThan(0);
-      expect(tool.outputTypes.length).toBeGreaterThan(0);
-      expect(tool.quotaKey).toBeTruthy();
-      expect(tool.status).toBeTruthy();
-      expect(tool.priority).toBeTruthy();
+      expect(
+        tool.id
+      ).toBeTruthy();
+
+      expect(
+        tool.slug
+      ).toBeTruthy();
+
+      expect(
+        tool.name
+      ).toBeTruthy();
+
+      expect(
+        tool.category
+      ).toBeTruthy();
+
+      expect(
+        tool.route
+      ).toBeTruthy();
+
+      expect(
+        tool.engine
+      ).toBeTruthy();
+
+      expect(
+        tool.inputTypes.length
+      ).toBeGreaterThan(0);
+
+      expect(
+        tool.outputTypes.length
+      ).toBeGreaterThan(0);
+
+      expect(
+        tool.quotaKey
+      ).toBeTruthy();
+
+      expect(
+        tool.status
+      ).toBeTruthy();
+
+      expect(
+        tool.priority
+      ).toBeTruthy();
     }
   });
 
   test("tool IDs are unique", () => {
-    const ids = tools.map((tool) => tool.id);
+    const ids =
+      tools.map(
+        (tool) => tool.id
+      );
 
-    expect(new Set(ids).size).toBe(ids.length);
+    expect(
+      new Set(ids).size
+    ).toBe(ids.length);
   });
 
   test("tool slugs are unique", () => {
-    const slugs = tools.map((tool) => tool.slug);
+    const slugs =
+      tools.map(
+        (tool) =>
+          tool.slug
+      );
 
-    expect(new Set(slugs).size).toBe(slugs.length);
+    expect(
+      new Set(slugs).size
+    ).toBe(
+      slugs.length
+    );
   });
 
   test("tool routes are unique", () => {
-    const routes = tools.map((tool) => tool.route);
+    const routes =
+      tools.map(
+        (tool) =>
+          tool.route
+      );
 
-    expect(new Set(routes).size).toBe(routes.length);
+    expect(
+      new Set(routes).size
+    ).toBe(
+      routes.length
+    );
   });
 
   test("can find a tool by ID", () => {
-    const tool = getToolById("IMG-01");
+    const tool =
+      getToolById(
+        "PDF-01"
+      );
 
-    expect(tool?.name).toBe("Compress Image");
+    expect(
+      tool?.name
+    ).toBe(
+      "Photos to One PDF"
+    );
   });
 
   test("can find a tool by slug", () => {
-    const tool = getToolBySlug("passport-id-photo");
+    const tool =
+      getToolBySlug(
+        "photos-to-one-pdf"
+      );
 
-    expect(tool?.id).toBe("IMG-10");
+    expect(
+      tool?.id
+    ).toBe("PDF-01");
   });
 
-  test("can filter tools by category", () => {
-    const imageTools = getToolsByCategory("IMAGE");
+  test("can filter image tools", () => {
+    const imageTools =
+      getToolsByCategory(
+        "IMAGE"
+      );
 
-    expect(imageTools).toHaveLength(16);
+    expect(
+      imageTools
+    ).toHaveLength(16);
+  });
+
+  test("can filter PDF tools", () => {
+    const pdfTools =
+      getToolsByCategory(
+        "PDF"
+      );
+
+    expect(
+      pdfTools
+    ).toHaveLength(19);
   });
 
   test("completed tools are available and remaining tools are coming soon", () => {
@@ -83,22 +170,41 @@ describe("tool registry", () => {
       "IMG-14",
       "IMG-15",
       "IMG-16",
+
+      "PDF-01",
     ];
 
-    for (const toolId of availableToolIds) {
-      const tool = getToolById(toolId);
+    for (
+      const toolId of
+      availableToolIds
+    ) {
+      const tool =
+        getToolById(
+          toolId
+        );
 
-      expect(tool?.status).toBe(
+      expect(
+        tool?.status
+      ).toBe(
         TOOL_STATUS.AVAILABLE
       );
     }
 
-    const unfinishedTools = tools.filter(
-      (tool) => !availableToolIds.includes(tool.id)
-    );
+    const unfinishedTools =
+      tools.filter(
+        (tool) =>
+          !availableToolIds.includes(
+            tool.id
+          )
+      );
 
-    for (const tool of unfinishedTools) {
-      expect(tool.status).toBe(
+    for (
+      const tool of
+      unfinishedTools
+    ) {
+      expect(
+        tool.status
+      ).toBe(
         TOOL_STATUS.COMING_SOON
       );
     }

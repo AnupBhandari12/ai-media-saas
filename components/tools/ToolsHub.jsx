@@ -1,22 +1,39 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
 import Link from "next/link";
 import { Search } from "lucide-react";
 
 import { TOOL_STATUS, tools } from "@/lib/tools/registry";
 
+const CATEGORY_LABELS = {
+  ALL: "All",
+  IMAGE: "Image",
+  PDF: "PDF",
+};
+
 export default function ToolsHub() {
   const [search, setSearch] = useState("");
+
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
+
+  const categories = useMemo(() => {
+    return ["ALL", ...new Set(tools.map((tool) => tool.category))];
+  }, []);
 
   const filteredTools = useMemo(() => {
     const query = search.trim().toLowerCase();
 
-    if (!query) {
-      return tools;
-    }
-
     return tools.filter((tool) => {
+      if (selectedCategory !== "ALL" && tool.category !== selectedCategory) {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
       return [
         tool.id,
         tool.name,
@@ -25,7 +42,7 @@ export default function ToolsHub() {
         tool.slug,
       ].some((value) => value.toLowerCase().includes(query));
     });
-  }, [search]);
+  }, [search, selectedCategory]);
 
   return (
     <div>
@@ -39,16 +56,33 @@ export default function ToolsHub() {
           type="search"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search tools..."
+          placeholder="Search image, PDF, video, audio and AI tools..."
           className="w-full rounded-xl border border-border bg-surface py-3 pl-11 pr-4 text-sm text-foreground outline-none transition focus:border-primary"
         />
       </div>
 
-      <div className="mt-4 flex items-center justify-between">
+      <div className="mt-5 flex flex-wrap gap-2">
+        {categories.map((category) => (
+          <button
+            key={category}
+            type="button"
+            onClick={() => setSelectedCategory(category)}
+            className={`min-h-11 rounded-xl border px-4 py-2 text-sm font-semibold transition ${
+              selectedCategory === category
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border bg-surface text-muted hover:border-primary/40 hover:text-foreground"
+            }`}
+          >
+            {CATEGORY_LABELS[category] || category}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted">{filteredTools.length} tools found</p>
 
         <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-          Image Tools
+          {CATEGORY_LABELS[selectedCategory]} Tools
         </span>
       </div>
 
@@ -56,7 +90,9 @@ export default function ToolsHub() {
         <div className="mt-8 rounded-2xl border border-dashed border-border bg-surface p-10 text-center">
           <p className="font-medium text-foreground">No tools found</p>
 
-          <p className="mt-2 text-sm text-muted">Try another search term.</p>
+          <p className="mt-2 text-sm text-muted">
+            Try another search term or category.
+          </p>
         </div>
       ) : (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -69,9 +105,15 @@ export default function ToolsHub() {
                 className="flex min-h-64 flex-col rounded-2xl border border-border bg-surface p-5"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <span className="rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-                    {tool.id}
-                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                      {tool.id}
+                    </span>
+
+                    <span className="rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-semibold text-muted">
+                      {tool.category}
+                    </span>
+                  </div>
 
                   <span className="text-xs font-medium text-muted">
                     {tool.priority}
