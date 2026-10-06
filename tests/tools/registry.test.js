@@ -172,6 +172,8 @@ describe("tool registry", () => {
       "IMG-16",
 
       "PDF-01",
+      "PDF-02",
+      "PDF-03",
     ];
 
     for (
