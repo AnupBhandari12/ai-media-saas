@@ -7,7 +7,10 @@ import {
 } from "@/lib/validation/videoTransform";
 
 import {
+    createOriginalVideoUrls,
+    createPreviewFallbackUrls,
     createVideoTransformUrls,
+    findTargetCompressedVideo,
     measureRemoteUrl,
 } from "@/lib/video/cloudinaryVideoTransform";
 
@@ -54,6 +57,40 @@ function getOutputDimensions(
         };
     }
 
+    if (
+        data.operation ===
+        "GIF"
+    ) {
+        const height =
+            media.width &&
+                media.height
+                ? Math.round(
+                    media.height *
+                    (
+                        data.width /
+                        media.width
+                    )
+                )
+                : null;
+
+        return {
+            width:
+                data.width,
+
+            height,
+        };
+    }
+
+    if (
+        data.operation ===
+        "EXTRACT_AUDIO"
+    ) {
+        return {
+            width: null,
+            height: null,
+        };
+    }
+
     return {
         width:
             media.width,
@@ -61,6 +98,15 @@ function getOutputDimensions(
         height:
             media.height,
     };
+}
+
+function requireDuration(
+    media
+) {
+    return Boolean(
+        media.duration &&
+        media.duration > 0
+    );
 }
 
 export async function POST(
@@ -159,8 +205,7 @@ export async function POST(
         "TRIM"
     ) {
         if (
-            !media.duration ||
-            media.duration <= 0
+            !requireDuration(media)
         ) {
             return Response.json(
                 {
@@ -210,8 +255,7 @@ export async function POST(
         "FRAME"
     ) {
         if (
-            !media.duration ||
-            media.duration <= 0
+            !requireDuration(media)
         ) {
             return Response.json(
                 {
@@ -240,6 +284,225 @@ export async function POST(
         }
     }
 
+    if (
+        data.operation ===
+        "GIF"
+    ) {
+        if (
+            !requireDuration(media)
+        ) {
+            return Response.json(
+                {
+                    error:
+                        "Video duration is unavailable.",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+
+        if (
+            data.start >=
+            media.duration ||
+            data.start +
+            data.duration >
+            media.duration +
+            0.05
+        ) {
+            return Response.json(
+                {
+                    error:
+                        "GIF range is outside the source video.",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+    }
+
+    if (
+        data.operation ===
+        "SMART_PREVIEW" ||
+        data.operation ===
+        "TARGET_COMPRESS"
+    ) {
+        if (
+            !requireDuration(media)
+        ) {
+            return Response.json(
+                {
+                    error:
+                        "Video duration is unavailable.",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+    }
+
+    if (
+        data.operation ===
+        "TARGET_COMPRESS"
+    ) {
+        const targetBytes =
+            Math.round(
+                data.targetMb *
+                1024 *
+                1024
+            );
+
+        if (
+            media.bytes &&
+            media.bytes <=
+            targetBytes
+        ) {
+            const original =
+                createOriginalVideoUrls(
+                    media.cloudinaryPublicId
+                );
+
+            return Response.json({
+                result: {
+                    operation:
+                        data.operation,
+
+                    mediaKind:
+                        "VIDEO",
+
+                    playbackUrl:
+                        media.secureUrl,
+
+                    downloadUrl:
+                        original.downloadUrl,
+
+                    format:
+                        media.format ||
+                        "mp4",
+
+                    originalBytes:
+                        media.bytes,
+
+                    outputBytes:
+                        media.bytes,
+
+                    originalDuration:
+                        media.duration,
+
+                    outputDuration:
+                        media.duration,
+
+                    width:
+                        media.width,
+
+                    height:
+                        media.height,
+
+                    targetMb:
+                        data.targetMb,
+
+                    targetBytes,
+
+                    targetReached:
+                        true,
+
+                    targetStatus:
+                        "ALREADY_WITHIN_TARGET",
+
+                    attempts: 0,
+
+                    bitRate: null,
+
+                    originalFilename:
+                        media.originalFilename,
+                },
+            });
+        }
+
+        const compressed =
+            await findTargetCompressedVideo(
+                media.cloudinaryPublicId,
+                {
+                    duration:
+                        media.duration,
+
+                    targetBytes,
+                }
+            );
+
+        if (!compressed) {
+            return Response.json(
+                {
+                    error:
+                        "Could not produce a measurable target-size result.",
+                },
+                {
+                    status: 502,
+                }
+            );
+        }
+
+        return Response.json({
+            result: {
+                operation:
+                    data.operation,
+
+                mediaKind:
+                    "VIDEO",
+
+                playbackUrl:
+                    compressed.playbackUrl,
+
+                downloadUrl:
+                    compressed.downloadUrl,
+
+                format: "mp4",
+
+                originalBytes:
+                    media.bytes,
+
+                outputBytes:
+                    compressed.outputBytes,
+
+                originalDuration:
+                    media.duration,
+
+                outputDuration:
+                    media.duration,
+
+                width:
+                    media.width,
+
+                height:
+                    media.height,
+
+                targetMb:
+                    data.targetMb,
+
+                targetBytes,
+
+                targetReached:
+                    compressed.targetReached,
+
+                targetStatus:
+                    compressed.targetReached
+                        ? "REACHED"
+                        : "CLOSEST_SAFE_RESULT",
+
+                attempts:
+                    compressed.attempts,
+
+                bitRate:
+                    compressed.bitRate,
+
+                originalFilename:
+                    media.originalFilename,
+            },
+        });
+    }
+
     let transformed;
 
     try {
@@ -260,10 +523,66 @@ export async function POST(
         );
     }
 
-    const outputBytes =
+    let outputBytes =
         await measureRemoteUrl(
             transformed.playbackUrl
         );
+
+    let previewMode = null;
+
+    if (
+        data.operation ===
+        "SMART_PREVIEW"
+    ) {
+        if (outputBytes) {
+            previewMode =
+                "AI_PREVIEW";
+        } else {
+            const previewDuration =
+                Math.min(
+                    data.duration,
+                    media.duration
+                );
+
+            const fallbackStart =
+                Math.max(
+                    0,
+                    (
+                        media.duration -
+                        previewDuration
+                    ) /
+                    2
+                );
+
+            transformed =
+            {
+                ...createPreviewFallbackUrls(
+                    media.cloudinaryPublicId,
+                    {
+                        start:
+                            fallbackStart,
+
+                        duration:
+                            previewDuration,
+                    }
+                ),
+
+                mediaKind:
+                    "VIDEO",
+
+                resultDuration:
+                    previewDuration,
+            };
+
+            outputBytes =
+                await measureRemoteUrl(
+                    transformed.playbackUrl
+                );
+
+            previewMode =
+                "FALLBACK_CLIP";
+        }
+    }
 
     if (
         data.operation ===
@@ -313,6 +632,33 @@ export async function POST(
             );
     }
 
+    let outputDuration = null;
+
+    if (
+        transformed.mediaKind ===
+        "VIDEO"
+    ) {
+        outputDuration =
+            transformed.resultDuration ??
+            media.duration;
+    }
+
+    if (
+        transformed.mediaKind ===
+        "AUDIO"
+    ) {
+        outputDuration =
+            media.duration;
+    }
+
+    if (
+        transformed.mediaKind ===
+        "GIF"
+    ) {
+        outputDuration =
+            data.duration;
+    }
+
     return Response.json({
         result: {
             operation:
@@ -341,18 +687,15 @@ export async function POST(
             originalDuration:
                 media.duration,
 
-            outputDuration:
-                transformed.mediaKind ===
-                    "VIDEO"
-                    ? transformed.resultDuration ??
-                    media.duration
-                    : null,
+            outputDuration,
 
             frameTime:
                 data.operation ===
                     "FRAME"
                     ? data.time
                     : null,
+
+            previewMode,
 
             width:
                 dimensions.width,

@@ -223,5 +223,140 @@ describe(
                 ).toBe(true);
             }
         );
+
+        test(
+            "accepts target compression",
+            () => {
+                const result =
+                    videoTransformSchema.safeParse({
+                        operation:
+                            "TARGET_COMPRESS",
+
+                        mediaId:
+                            "media-1",
+
+                        targetMb: 10,
+                    });
+
+                expect(
+                    result.success
+                ).toBe(true);
+            }
+        );
+
+        test(
+            "rejects oversized target",
+            () => {
+                const result =
+                    videoTransformSchema.safeParse({
+                        operation:
+                            "TARGET_COMPRESS",
+
+                        mediaId:
+                            "media-1",
+
+                        targetMb: 100,
+                    });
+
+                expect(
+                    result.success
+                ).toBe(false);
+            }
+        );
+
+        test(
+            "accepts audio extraction",
+            () => {
+                const result =
+                    videoTransformSchema.safeParse({
+                        operation:
+                            "EXTRACT_AUDIO",
+
+                        mediaId:
+                            "media-1",
+
+                        format: "mp3",
+
+                        quality:
+                            "BALANCED",
+                    });
+
+                expect(
+                    result.success
+                ).toBe(true);
+            }
+        );
+
+        test(
+            "accepts video to gif",
+            () => {
+                const result =
+                    videoTransformSchema.safeParse({
+                        operation:
+                            "GIF",
+
+                        mediaId:
+                            "media-1",
+
+                        start: 1,
+
+                        duration: 4,
+
+                        width: 480,
+
+                        fps: 10,
+                    });
+
+                expect(
+                    result.success
+                ).toBe(true);
+            }
+        );
+
+        test(
+            "rejects long gif",
+            () => {
+                const result =
+                    videoTransformSchema.safeParse({
+                        operation:
+                            "GIF",
+
+                        mediaId:
+                            "media-1",
+
+                        start: 0,
+
+                        duration: 15,
+
+                        width: 480,
+
+                        fps: 10,
+                    });
+
+                expect(
+                    result.success
+                ).toBe(false);
+            }
+        );
+
+        test(
+            "accepts smart preview",
+            () => {
+                const result =
+                    videoTransformSchema.safeParse({
+                        operation:
+                            "SMART_PREVIEW",
+
+                        mediaId:
+                            "media-1",
+
+                        duration: 8,
+                    });
+
+                expect(
+                    result.success
+                ).toBe(true);
+            }
+        );
     }
 );

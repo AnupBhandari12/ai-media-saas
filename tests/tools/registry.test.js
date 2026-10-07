@@ -220,12 +220,16 @@ describe("tool registry", () => {
       "CRT-08",
 
       "VID-01",
+      "VID-02",
       "VID-03",
       "VID-04",
       "VID-07",
       "VID-09",
       "VID-10",
+      "VID-11",
       "VID-12",
+      "VID-13",
+      "VID-16",
 
 
     ];
