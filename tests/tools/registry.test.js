@@ -233,6 +233,7 @@ describe("tool registry", () => {
       "VID-12",
       "VID-13",
       "VID-14",
+      "VID-15",
       "VID-16",
 
 

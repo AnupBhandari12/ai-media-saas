@@ -28,7 +28,6 @@ export default function MergeVideosTool({ uploadFolder, onResultChange }) {
 
   async function loadLibrary() {
     try {
-
       const response = await fetch("/api/video/library");
 
       const data = await response.json();
@@ -50,7 +49,47 @@ export default function MergeVideosTool({ uploadFolder, onResultChange }) {
   }
 
   useEffect(() => {
-    loadLibrary();
+    const controller = new AbortController();
+
+    fetch("/api/video/library", {
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Could not load videos.");
+        }
+
+        return data;
+      })
+      .then((data) => {
+        if (!controller.signal.aborted) {
+          setLibrary(data.videos);
+        }
+      })
+      .catch((loadError) => {
+        if (loadError?.name === "AbortError") {
+          return;
+        }
+
+        if (!controller.signal.aborted) {
+          setError(
+            loadError instanceof Error
+              ? loadError.message
+              : "Could not load videos.",
+          );
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   function clearResult() {
