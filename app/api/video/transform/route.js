@@ -2,12 +2,66 @@ import { auth } from "@clerk/nextjs/server";
 
 import prisma from "@/lib/prisma";
 
-import { videoTransformSchema } from "@/lib/validation/videoTransform";
+import {
+    videoTransformSchema,
+} from "@/lib/validation/videoTransform";
 
 import {
     createVideoTransformUrls,
-    measureVideoUrl,
+    measureRemoteUrl,
 } from "@/lib/video/cloudinaryVideoTransform";
+
+import {
+    getSocialVideoPreset,
+} from "@/lib/video/videoToolPresets";
+
+function getOutputDimensions(
+    media,
+    data
+) {
+    if (
+        data.operation ===
+        "SOCIAL_RESIZE"
+    ) {
+        const preset =
+            getSocialVideoPreset(
+                data.preset
+            );
+
+        return {
+            width:
+                preset.width,
+
+            height:
+                preset.height,
+        };
+    }
+
+    if (
+        data.operation ===
+        "ROTATE" &&
+        (
+            data.angle === 90 ||
+            data.angle === 270
+        )
+    ) {
+        return {
+            width:
+                media.height,
+
+            height:
+                media.width,
+        };
+    }
+
+    return {
+        width:
+            media.width,
+
+        height:
+            media.height,
+    };
+}
 
 export async function POST(
     request
@@ -72,23 +126,21 @@ export async function POST(
         validation.data;
 
     const media =
-        await prisma.media.findFirst(
-            {
-                where: {
-                    id:
-                        data.mediaId,
+        await prisma.media.findFirst({
+            where: {
+                id:
+                    data.mediaId,
 
-                    ownerId:
-                        userId,
+                ownerId:
+                    userId,
 
-                    type:
-                        "VIDEO",
+                type:
+                    "VIDEO",
 
-                    status:
-                        "READY",
-                },
-            }
-        );
+                status:
+                    "READY",
+            },
+        });
 
     if (!media) {
         return Response.json(
@@ -153,14 +205,63 @@ export async function POST(
         }
     }
 
-    const transformed =
-        createVideoTransformUrls(
-            media.cloudinaryPublicId,
-            data
+    if (
+        data.operation ===
+        "FRAME"
+    ) {
+        if (
+            !media.duration ||
+            media.duration <= 0
+        ) {
+            return Response.json(
+                {
+                    error:
+                        "Video duration is unavailable.",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+
+        if (
+            data.time >
+            media.duration
+        ) {
+            return Response.json(
+                {
+                    error:
+                        "Selected frame time is outside the video.",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+    }
+
+    let transformed;
+
+    try {
+        transformed =
+            createVideoTransformUrls(
+                media.cloudinaryPublicId,
+                data
+            );
+    } catch {
+        return Response.json(
+            {
+                error:
+                    "Could not create video transformation.",
+            },
+            {
+                status: 400,
+            }
         );
+    }
 
     const outputBytes =
-        await measureVideoUrl(
+        await measureRemoteUrl(
             transformed.playbackUrl
         );
 
@@ -180,6 +281,12 @@ export async function POST(
         );
     }
 
+    const dimensions =
+        getOutputDimensions(
+            media,
+            data
+        );
+
     const originalBytes =
         media.bytes || null;
 
@@ -187,6 +294,8 @@ export async function POST(
     let savedPercent = null;
 
     if (
+        transformed.mediaKind ===
+        "VIDEO" &&
         originalBytes &&
         outputBytes
     ) {
@@ -209,6 +318,9 @@ export async function POST(
             operation:
                 data.operation,
 
+            mediaKind:
+                transformed.mediaKind,
+
             playbackUrl:
                 transformed.playbackUrl,
 
@@ -230,14 +342,23 @@ export async function POST(
                 media.duration,
 
             outputDuration:
-                transformed.resultDuration ??
-                media.duration,
+                transformed.mediaKind ===
+                    "VIDEO"
+                    ? transformed.resultDuration ??
+                    media.duration
+                    : null,
+
+            frameTime:
+                data.operation ===
+                    "FRAME"
+                    ? data.time
+                    : null,
 
             width:
-                media.width,
+                dimensions.width,
 
             height:
-                media.height,
+                dimensions.height,
 
             originalFilename:
                 media.originalFilename,
