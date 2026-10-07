@@ -15,8 +15,19 @@ import {
 describe("tool registry", () => {
   test("contains the registered tool catalog", () => {
     expect(tools).toHaveLength(
-      43
+      59
     );
+  });
+
+  test("can filter video tools", () => {
+    const videoTools =
+      getToolsByCategory(
+        "VIDEO"
+      );
+
+    expect(
+      videoTools
+    ).toHaveLength(16);
   });
 
   test("can filter creator tools", () => {
@@ -207,7 +218,11 @@ describe("tool registry", () => {
       "CRT-06",
       "CRT-07",
       "CRT-08",
-      
+
+      "VID-01",
+      "VID-03",
+      "VID-04",
+
     ];
 
     for (

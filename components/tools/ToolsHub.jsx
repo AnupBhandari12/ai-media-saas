@@ -11,7 +11,8 @@ const CATEGORY_LABELS = {
   ALL: "All",
   IMAGE: "Image",
   PDF: "PDF",
-  CREATOR : "Creator",
+  CREATOR: "Creator",
+  VIDEO: "Video",
 };
 
 export default function ToolsHub() {
