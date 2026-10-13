@@ -250,6 +250,9 @@ describe("tool registry", () => {
       "AUD-01",
       "AUD-02",
       "AUD-03",
+      "AUD-04",
+      "AUD-05",
+      "AUD-06",
 
     ];
 
