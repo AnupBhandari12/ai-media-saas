@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^7.9.10",
+    "@ffmpeg/ffmpeg": "0.12.15",
+    "@ffmpeg/util": "0.12.2",
     "@prisma/adapter-neon": "7.10.0",
     "@prisma/client": "7.10.0",
     "cloudinary": "^2.11.0",
@@ -27,6 +29,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@ffmpeg/core": "0.12.10",
     "@tailwindcss/postcss": "^4",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",

@@ -15,8 +15,19 @@ import {
 describe("tool registry", () => {
   test("contains the registered tool catalog", () => {
     expect(tools).toHaveLength(
-      59
+      67
     );
+  });
+
+  test("can filter audio tools", () => {
+    const audioTools =
+      getToolsByCategory(
+        "AUDIO"
+      );
+
+    expect(
+      audioTools
+    ).toHaveLength(8);
   });
 
   test("can filter video tools", () => {
@@ -236,6 +247,9 @@ describe("tool registry", () => {
       "VID-15",
       "VID-16",
 
+      "AUD-01",
+      "AUD-02",
+      "AUD-03",
 
     ];
 

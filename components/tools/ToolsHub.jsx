@@ -13,6 +13,7 @@ const CATEGORY_LABELS = {
   PDF: "PDF",
   CREATOR: "Creator",
   VIDEO: "Video",
+  AUDIO: "Audio",
 };
 
 export default function ToolsHub() {
