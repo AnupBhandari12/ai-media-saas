@@ -5,6 +5,7 @@ import {
   WORKER_DOCUMENT_TOOL_IDS,
   toPublicWorkerJob,
 } from "@/lib/worker/jobConfig";
+import { deleteStoredObject } from "@/lib/worker/objectStorage";
 
 export const runtime = "nodejs";
 
@@ -16,10 +17,7 @@ async function authorizedJob(params) {
 
   if (process.env.WORKER_JOBS_ENABLED !== "true") {
     return {
-      error: Response.json(
-        { error: "Document jobs are not enabled yet." },
-        { status: 503 },
-      ),
+      error: Response.json({ error: "Document jobs are not enabled yet." }, { status: 503 }),
     };
   }
 
@@ -49,16 +47,15 @@ export async function GET(_request, { params }) {
   return Response.json({ job: toPublicWorkerJob(found.job) });
 }
 
-// In 19B1 DELETE means cancel only a reservation awaiting upload.
-// It does not delete historical job records or any source documents.
 export async function DELETE(_request, { params }) {
   const found = await authorizedJob(params);
   if (found.error) return found.error;
 
-  const refs = found.job.inputRefs;
-  if (found.job.status !== "PENDING" || refs?.stage !== "AWAITING_UPLOAD") {
+  const refs = found.job.inputRefs ?? {};
+  const allowed = ["AWAITING_UPLOAD", "UPLOADING", "READY_FOR_PROCESSING"];
+  if (found.job.status !== "PENDING" || !allowed.includes(refs.stage)) {
     return Response.json(
-      { error: "Only reservations awaiting upload can be cancelled." },
+      { error: "Only jobs not yet processing may be cancelled." },
       { status: 409 },
     );
   }
@@ -68,11 +65,9 @@ export async function DELETE(_request, { params }) {
       id: found.job.id,
       ownerId: found.userId,
       status: "PENDING",
+      inputRefs: { path: ["stage"], equals: refs.stage },
     },
-    data: {
-      status: "CANCELLED",
-      completedAt: new Date(),
-    },
+    data: { status: "CANCELLED", completedAt: new Date() },
   });
 
   if (updated.count !== 1) {
@@ -80,6 +75,15 @@ export async function DELETE(_request, { params }) {
       { error: "Job status changed. Refresh and try again." },
       { status: 409 },
     );
+  }
+
+  // Upload URLs may remain valid for a few minutes. Lifecycle expiry is mandatory.
+  if (process.env.WORKER_UPLOADS_ENABLED === "true") {
+    for (const key of [refs.storageKey, refs.verifiedKey]) {
+      if (typeof key === "string") {
+        await deleteStoredObject(key).catch(() => {});
+      }
+    }
   }
 
   const job = await prisma.processingJob.findFirst({
