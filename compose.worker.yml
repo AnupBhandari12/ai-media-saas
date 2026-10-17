@@ -1,0 +1,26 @@
+services:
+  document-worker:
+    build:
+      context: ./worker
+
+    network_mode: none
+    read_only: true
+    user: "10001:10001"
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges:true
+
+    pids_limit: 128
+    mem_limit: 1g
+    cpus: 1.0
+
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=256m,uid=10001,gid=10001
+
+    volumes:
+      - ./worker/local-files:/work
+
+    restart: "no"
