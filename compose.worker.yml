@@ -1,5 +1,6 @@
 services:
   document-worker:
+    image: ai-media-document-worker:latest
     build:
       context: ./worker
 
