@@ -3,6 +3,7 @@ import { lstat, mkdir, stat, unlink } from "node:fs/promises";
 import path from "node:path";
 import { MAX_INPUT_BYTES, validateWorkerRequest } from "./validation.mjs";
 import { protectPdf, readPdfPassword } from "./pdfProtection.mjs";
+import { readUnlockPassword, unlockPdf } from "./pdfUnlock.mjs";
 
 const INPUT_DIR = "/work/input";
 const OUTPUT_DIR = "/work/output";
@@ -100,6 +101,16 @@ async function main() {
     const result = await protectPdf(request, password);
     console.log(JSON.stringify({
       status: "COMPLETED", operation: "PROTECT_PDF",
+      output: result.filename, bytes: result.bytes,
+    }));
+    return;
+  }
+
+  if (request.action === "unlock") {
+    const password = await readUnlockPassword(process.stdin);
+    const result = await unlockPdf(request, password);
+    console.log(JSON.stringify({
+      status: "COMPLETED", operation: "UNLOCK_PDF",
       output: result.filename, bytes: result.bytes,
     }));
     return;

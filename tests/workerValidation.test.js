@@ -7,6 +7,14 @@ describe("Phase 19A document worker", () => {
     expect(result.outputFilename).toBe("report-protected.pdf");
     expect(() => validateWorkerRequest("protect", "script.js")).toThrow();
   });
+  test("accepts PDF-16 known-password unlock", () => {
+    const request = validateWorkerRequest("unlock", "sample-protected.pdf");
+    expect(request.extension).toBe(".pdf");
+    expect(request.outputFilename).toBe("sample-protected-unlocked.pdf");
+    expect(() => validateWorkerRequest("unlock", "notes.docx")).toThrow();
+    expect(() => validateWorkerRequest("unlock", "../secret.pdf")).toThrow();
+  });
+
   test("supports health checks", () => {
     expect(validateWorkerRequest("health")).toEqual({ action: "health" });
   });
