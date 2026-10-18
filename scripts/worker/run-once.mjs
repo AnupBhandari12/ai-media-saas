@@ -21,6 +21,7 @@ import {
   validateReadyJob,
 } from "../../lib/worker/executionRules.js";
 import { WORKER_DOCUMENT_TOOL_IDS } from "../../lib/worker/jobConfig.js";
+import { assertDevOwner } from "../../lib/worker/maintenanceRules.mjs";
 
 const runFile = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -36,6 +37,7 @@ function checkEnvironment() {
   if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
     throw new Error("This local worker must not run inside Vercel or production.");
   }
+  assertDevOwner(process.env);
 }
 
 async function getNextReadyJob() {
@@ -43,7 +45,9 @@ async function getNextReadyJob() {
   // Atomic status/stage claim avoids processing the same reservation twice.
   const candidate = await prisma.processingJob.findFirst({
     where: {
+      ownerId: process.env.WORKER_DEV_OWNER_ID,
       toolId: { in: WORKER_DOCUMENT_TOOL_IDS },
+      createdAt: { gte: new Date(Date.now() - 72 * 60 * 60 * 1000) },
       status: "PENDING",
       inputRefs: { path: ["stage"], equals: "READY_FOR_PROCESSING" },
     },
@@ -54,6 +58,7 @@ async function getNextReadyJob() {
   const updated = await prisma.processingJob.updateMany({
     where: {
       id: candidate.id,
+      ownerId: process.env.WORKER_DEV_OWNER_ID,
       status: "PENDING",
       inputRefs: { path: ["stage"], equals: "READY_FOR_PROCESSING" },
     },
