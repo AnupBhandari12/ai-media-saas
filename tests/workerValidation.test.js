@@ -22,6 +22,12 @@ describe("Phase 19A document worker", () => {
     expect(() => validateWorkerRequest("compress-target", "../private.pdf")).toThrow();
   });
 
+  test("accepts PDF-30 repair with checked output name", () => {
+    expect(validateWorkerRequest("repair", "sample.pdf").outputFilename).toBe("sample-normalized.pdf");
+    expect(() => validateWorkerRequest("repair", "notes.docx")).toThrow();
+    expect(() => validateWorkerRequest("repair", "../private.pdf")).toThrow();
+  });
+
   test("supports health checks", () => {
     expect(validateWorkerRequest("health")).toEqual({ action: "health" });
   });

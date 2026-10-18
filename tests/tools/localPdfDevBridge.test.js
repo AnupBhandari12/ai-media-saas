@@ -49,10 +49,11 @@ describe("Phase 19B7 loopback-only PDF development bridge", () => {
     expect(authorizedDevToken(`Bearer ${"x".repeat(400)}`, secret)).toBe(false);
   });
 
-  test("permits only the three planned tool operations", () => {
+  test("permits only the four planned tool operations", () => {
     expect(validateDevOperation("compress-target", "1500").outputFilename).toBe("input-target.pdf");
     expect(validateDevOperation("protect", null).outputFilename).toBe("input-protected.pdf");
     expect(validateDevOperation("unlock", null).outputFilename).toBe("input-unlocked.pdf");
+    expect(validateDevOperation("repair", null).outputFilename).toBe("input-normalized.pdf");
     for (const op of ["exec", "convert", "health", "..", ""]) {
       expect(() => validateDevOperation(op, null)).toThrow();
     }
@@ -71,6 +72,8 @@ describe("Phase 19B7 loopback-only PDF development bridge", () => {
     expect(validateDevPassword("protect", "StrongExample!2026")).toBe("StrongExample!2026");
     expect(validateDevPassword("unlock", "नेपालीPass")).toBe("नेपालीPass");
     expect(validateDevPassword("compress-target", "")).toBe("");
+    expect(validateDevPassword("repair", "")).toBe("");
+    expect(() => validateDevPassword("repair", "not-empty")).toThrow();
     for (const val of ["weak", "-FlagInjectionExample123", "Bad\nPassword12345", "🔒SecretPassword2026"]) {
       expect(() => validateDevPassword("protect", val)).toThrow();
     }
@@ -115,8 +118,18 @@ describe("Phase 19B7 loopback-only PDF development bridge", () => {
     })).toThrow();
   });
 
+  test("repair bridge uses a fixed Docker allowlisted command without password", () => {
+    const args = buildLocalDockerArgs({
+      jobDirectory: "D:\\ai-media\\worker\\local-files\\pdf-dev-abc",
+      operation: "repair",
+      containerName: "ai-media-pdf-dev-" + "c".repeat(24),
+    });
+    expect(args.slice(-2)).toEqual(["repair", "input.pdf"]);
+    expect(args).toContain("none");
+  });
+
   test("new page configurations exist without changing public registry", () => {
-    expect(Object.keys(DEV_PDF_UI).sort()).toEqual(["PDF-12", "PDF-15", "PDF-16"]);
+    expect(Object.keys(DEV_PDF_UI).sort()).toEqual(["PDF-12", "PDF-15", "PDF-16", "PDF-30"]);
     expect(validateDevPdfSelection({ name: "sample.pdf", size: 1024 })).toBe(null);
     expect(validateDevPdfSelection({ name: "../../secrets.pdf", size: 500 })).not.toBe(null);
     expect(validateDevPdfSelection({ name: "document.docx", size: 500 })).not.toBe(null);

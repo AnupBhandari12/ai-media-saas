@@ -5,6 +5,7 @@ import { MAX_INPUT_BYTES, validateWorkerRequest } from "./validation.mjs";
 import { protectPdf, readPdfPassword } from "./pdfProtection.mjs";
 import { readUnlockPassword, unlockPdf } from "./pdfUnlock.mjs";
 import { compressPdfToTarget, parseTargetKiB } from "./pdfTargetCompression.mjs";
+import { repairPdf } from "./pdfRepair.mjs";
 
 const INPUT_DIR = "/work/input";
 const OUTPUT_DIR = "/work/output";
@@ -123,6 +124,14 @@ async function main() {
     console.log(JSON.stringify({
       status: "COMPLETED", operation: "COMPRESS_PDF_TO_TARGET",
       ...result,
+    }));
+    return;
+  }
+
+  if (request.action === "repair") {
+    const result = await repairPdf(request);
+    console.log(JSON.stringify({
+      status: "COMPLETED", operation: "REPAIR_NORMALIZE_PDF", ...result,
     }));
     return;
   }

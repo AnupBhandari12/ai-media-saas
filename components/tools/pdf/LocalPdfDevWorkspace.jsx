@@ -67,8 +67,8 @@ export default function LocalPdfDevWorkspace({ toolId }) {
         setError("New password: 12–64 printable ASCII characters, beginning with a letter or number.");
         return;
       }
-    } else if (password.length < 1 || password.length > 128 ||
-               new TextEncoder().encode(password).length > 256 || /[\x00-\x1f\x7f]/.test(password)) {
+    } else if (processing === "unlock" && (password.length < 1 || password.length > 128 ||
+               new TextEncoder().encode(password).length > 256 || /[\x00-\x1f\x7f]/.test(password))) {
       setError("Enter your known PDF password (1–128 characters; no control characters).");
       return;
     }
@@ -76,7 +76,7 @@ export default function LocalPdfDevWorkspace({ toolId }) {
     setError("");
     setResult(null);
     try {
-      const secretBytes = new TextEncoder().encode(processing === "compress-target" ? "" : password);
+      const secretBytes = new TextEncoder().encode(["compress-target", "repair"].includes(processing) ? "" : password);
       const frame = new Uint8Array(2);
       new DataView(frame.buffer).setUint16(0, secretBytes.length, false);
       // Blob is composed of file + small prefix; does not buffer the PDF in JS memory.
@@ -112,6 +112,8 @@ export default function LocalPdfDevWorkspace({ toolId }) {
         originalBytes: Number.isFinite(originalBytes) && originalBytes > 0 ? originalBytes : file.size,
         bytes: Number.isFinite(outputBytes) && outputBytes > 0 ? outputBytes : blob.size,
         targetMet: response.headers.get("X-PDF-Target-Met") === "true",
+        method: response.headers.get("X-PDF-Method"),
+        sourceIntegrityPassed: response.headers.get("X-PDF-Source-Integrity") === "true",
       });
     } catch (failure) {
       setError(failure instanceof TypeError
@@ -129,10 +131,15 @@ export default function LocalPdfDevWorkspace({ toolId }) {
         <>
           <ResultPanel title="Local PDF ready" description={processing === "compress-target" && !result.targetMet
               ? "The requested target was not met safely. The best checked output is ready."
+              : processing === "repair" ? "Best-effort reconstruction. Verify every page, text, links and form fields against your original. Digital signatures may be invalidated."
               : "Review the PDF after download; do not use sensitive documents during development."}
             metadata={[
               { label: "Original", value: displayBytes(result.originalBytes) },
               { label: "Output", value: displayBytes(result.bytes) },
+              ...(processing === "repair" ? [
+                { label: "Method", value: result.method || "unknown" },
+                { label: "Original integrity", value: result.sourceIntegrityPassed ? "Passed" : "Issues detected" },
+              ] : []),
               ...(processing === "compress-target" ? [
                 { label: "Target", value: `${target} KiB` },
                 { label: "Target met", value: result.targetMet ? "Yes" : "No" },
@@ -173,6 +180,11 @@ export default function LocalPdfDevWorkspace({ toolId }) {
             className="mt-2 w-full rounded-xl border border-border bg-background p-3 text-sm text-foreground" />
           <p className="mt-2 text-xs text-muted">50–25600 KiB. Reducing scan quality can harm readability; exact target not guaranteed.</p>
         </div>
+      ) : processing === "repair" ? (
+        <p className="mt-5 rounded-xl border border-border bg-background p-3 text-sm text-muted">
+          No password needed. This best-effort tool may change forms, annotations, accessibility and digital signatures.
+          Do not use the result without visually comparing every page.
+        </p>
       ) : (
         <div className="mt-5">
           <label htmlFor="pdf-dev-password" className="text-sm font-semibold text-foreground">

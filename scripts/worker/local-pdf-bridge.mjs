@@ -34,7 +34,7 @@ function corsHeaders(origin) {
     "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Authorization, Content-Type",
-    "Access-Control-Expose-Headers": "X-PDF-Original-Bytes, X-PDF-Output-Bytes, X-PDF-Target-Met, X-PDF-Pages",
+    "Access-Control-Expose-Headers": "X-PDF-Original-Bytes, X-PDF-Output-Bytes, X-PDF-Target-Met, X-PDF-Pages, X-PDF-Method, X-PDF-Source-Integrity",
     "Vary": "Origin",
   } : {};
 }
@@ -128,7 +128,8 @@ async function handlePdf(req, res, config, origin) {
         workerResult.status !== "COMPLETED" ||
         (config.operation === "compress-target" && workerResult.operation !== "COMPRESS_PDF_TO_TARGET") ||
         (config.operation === "protect" && workerResult.operation !== "PROTECT_PDF") ||
-        (config.operation === "unlock" && workerResult.operation !== "UNLOCK_PDF")) {
+        (config.operation === "unlock" && workerResult.operation !== "UNLOCK_PDF") ||
+        (config.operation === "repair" && workerResult.operation !== "REPAIR_NORMALIZE_PDF")) {
       throw new Error("Worker produced an invalid PDF result.");
     }
     await validatePdfSignature(resultPath);
@@ -144,6 +145,8 @@ async function handlePdf(req, res, config, origin) {
       "X-PDF-Output-Bytes": String(resultStats.size),
       "X-PDF-Target-Met": config.operation === "compress-target" ? String(workerResult.targetMet === true) : "",
       "X-PDF-Pages": Number.isInteger(workerResult.pages) ? String(workerResult.pages) : "",
+      "X-PDF-Method": config.operation === "repair" && ["qpdf", "ghostscript"].includes(workerResult.method) ? workerResult.method : "",
+      "X-PDF-Source-Integrity": config.operation === "repair" ? String(workerResult.sourceIntegrityPassed === true) : "",
     });
     await pipeline(createReadStream(resultPath), res);
   } catch (error) {
@@ -226,7 +229,7 @@ const server = http.createServer(async (req, res) => {
 server.requestTimeout = 180_000;
 server.headersTimeout = 15_000;
 server.listen(PDF_DEV_PORT, "127.0.0.1", () => {
-  console.log("Local PDF-12/15/16 bridge: http://127.0.0.1:" + PDF_DEV_PORT);
+  console.log("Local PDF-12/15/16/30 bridge: http://127.0.0.1:" + PDF_DEV_PORT);
   console.log("Allowed browser origin: " + allowedOrigin);
   console.log("LOCAL BRIDGE TOKEN (paste into local dev page, never share): " + accessToken);
   console.log("Docker Desktop must be running. Ctrl+C to stop. DO NOT deploy publicly.");
