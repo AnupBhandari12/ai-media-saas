@@ -4,6 +4,7 @@ import path from "node:path";
 import { MAX_INPUT_BYTES, validateWorkerRequest } from "./validation.mjs";
 import { protectPdf, readPdfPassword } from "./pdfProtection.mjs";
 import { readUnlockPassword, unlockPdf } from "./pdfUnlock.mjs";
+import { compressPdfToTarget, parseTargetKiB } from "./pdfTargetCompression.mjs";
 
 const INPUT_DIR = "/work/input";
 const OUTPUT_DIR = "/work/output";
@@ -112,6 +113,16 @@ async function main() {
     console.log(JSON.stringify({
       status: "COMPLETED", operation: "UNLOCK_PDF",
       output: result.filename, bytes: result.bytes,
+    }));
+    return;
+  }
+
+  if (request.action === "compress-target") {
+    const targetKiB = parseTargetKiB(process.argv[4]);
+    const result = await compressPdfToTarget(request, targetKiB);
+    console.log(JSON.stringify({
+      status: "COMPLETED", operation: "COMPRESS_PDF_TO_TARGET",
+      ...result,
     }));
     return;
   }

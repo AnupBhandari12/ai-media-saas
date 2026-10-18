@@ -9,7 +9,7 @@ export const MAX_INPUT_BYTES = 25 * 1024 * 1024;
 export function validateWorkerRequest(action, filename) {
   if (action === "health") return { action: "health" };
 
-  if (!["check", "convert", "protect", "unlock"].includes(action)) {
+  if (!["check", "convert", "protect", "unlock", "compress-target"].includes(action)) {
     throw new Error("Unsupported worker operation.");
   }
 
@@ -26,6 +26,9 @@ export function validateWorkerRequest(action, filename) {
   }
   if (action === "protect" && extension !== ".pdf") {
     throw new Error("PDF protection requires a .pdf file.");
+  }
+  if (action === "compress-target" && extension !== ".pdf") {
+    throw new Error("PDF target compression requires a .pdf file.");
   }
   if (action === "unlock" && extension !== ".pdf") {
     throw new Error("PDF unlock requires a .pdf file.");
@@ -45,6 +48,8 @@ export function validateWorkerRequest(action, filename) {
           ? `${filename.slice(0, -extension.length)}-protected.pdf`
           : action === "unlock"
             ? `${filename.slice(0, -extension.length)}-unlocked.pdf`
-            : null,
+            : action === "compress-target"
+              ? `${filename.slice(0, -extension.length)}-target.pdf`
+              : null,
   };
 }

@@ -15,6 +15,13 @@ describe("Phase 19A document worker", () => {
     expect(() => validateWorkerRequest("unlock", "../secret.pdf")).toThrow();
   });
 
+  test("accepts PDF-12 compression input and safe output naming", () => {
+    const request = validateWorkerRequest("compress-target", "scanned.pdf");
+    expect(request.outputFilename).toBe("scanned-target.pdf");
+    expect(() => validateWorkerRequest("compress-target", "script.js")).toThrow();
+    expect(() => validateWorkerRequest("compress-target", "../private.pdf")).toThrow();
+  });
+
   test("supports health checks", () => {
     expect(validateWorkerRequest("health")).toEqual({ action: "health" });
   });

@@ -14,7 +14,7 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY cli.mjs validation.mjs pdfProtection.mjs pdfUnlock.mjs ./
+COPY cli.mjs validation.mjs pdfProtection.mjs pdfUnlock.mjs pdfTargetCompression.mjs ./
 
 RUN useradd -u 10001 -m worker \
     && mkdir -p /work/input /work/output \
