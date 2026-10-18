@@ -14,6 +14,7 @@ const CATEGORY_LABELS = {
   CREATOR: "Creator",
   VIDEO: "Video",
   AUDIO: "Audio",
+  UTILITY: "Utility",
 };
 
 export default function ToolsHub() {
@@ -59,7 +60,7 @@ export default function ToolsHub() {
           type="search"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search image, PDF, video, audio and AI tools..."
+          placeholder="Search image, PDF, utility, video, audio and AI tools..."
           className="w-full rounded-xl border border-border bg-surface py-3 pl-11 pr-4 text-sm text-foreground outline-none transition focus:border-primary"
         />
       </div>

@@ -15,7 +15,7 @@ import {
 describe("tool registry", () => {
   test("contains the registered tool catalog", () => {
     expect(tools).toHaveLength(
-      67
+      73
     );
   });
 
@@ -253,6 +253,13 @@ describe("tool registry", () => {
       "AUD-04",
       "AUD-05",
       "AUD-06",
+
+      "UTL-01",
+      "UTL-03",
+      "UTL-04",
+      "UTL-05",
+      "UTL-06",
+      "UTL-08",
 
     ];
 
