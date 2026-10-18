@@ -14,7 +14,7 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY cli.mjs validation.mjs ./
+COPY cli.mjs validation.mjs pdfProtection.mjs pdfUnlock.mjs pdfTargetCompression.mjs pdfRepair.mjs ./
 
 RUN useradd -u 10001 -m worker \
     && mkdir -p /work/input /work/output \
@@ -27,5 +27,4 @@ ENV XDG_CONFIG_HOME=/tmp/.config
 ENV SAL_USE_VCLPLUGIN=svp
 
 ENTRYPOINT ["/usr/bin/tini", "--", "node", "/app/cli.mjs"]
-
 CMD ["health"]

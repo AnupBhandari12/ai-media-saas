@@ -1,5 +1,6 @@
 import { getUploadJob, uploadResponseError } from "@/lib/worker/uploadAuth";
 import { createPresignedDownload } from "@/lib/worker/objectStorage";
+import { isResultExpired } from "@/lib/worker/maintenanceRules.mjs";
 
 export const runtime = "nodejs";
 
@@ -8,6 +9,9 @@ export async function GET(request, { params }) {
   if (access.error) return access.error;
 
   const { job } = access;
+  if (isResultExpired(job) || job.resultRefs?.expired === true) {
+    return uploadResponseError("Document result expired after seven days.", 410);
+  }
   const result = job.resultRefs;
   if (job.status !== "COMPLETED" || !result ||
       typeof result !== "object" || Array.isArray(result) ||
