@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import LocalCaptionDraftLab from "@/components/ai/LocalCaptionDraftLab";
+import RealCaptionLab from "@/components/ai/RealCaptionLab";
 
 import {
   CAPTION_EXAMPLES,
@@ -182,11 +183,12 @@ export default function CaptionGeneratorClient() {
             </p>
           </div>
           <div className="inline-flex shrink-0 items-center gap-2 self-start rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
-            <ShieldCheck className="h-5 w-5" aria-hidden="true" /> No paid API calls
+            <ShieldCheck className="h-5 w-5" aria-hidden="true" /> Local tools free · Real AI requires approval
           </div>
         </div>
 
         <LocalCaptionDraftLab />
+        <RealCaptionLab />
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
           <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
