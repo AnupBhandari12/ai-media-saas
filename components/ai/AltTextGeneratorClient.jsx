@@ -7,6 +7,8 @@ import {
   ImagePlus, LoaderCircle, ShieldCheck, Sparkles, X,
 } from "lucide-react";
 
+import LocalAltTextReviewLab from "@/components/ai/LocalAltTextReviewLab";
+
 import {
   ALT_TEXT_EXAMPLES,
   ALT_TEXT_MAX_LENGTH,
@@ -193,6 +195,8 @@ export default function AltTextGeneratorClient() {
             <ShieldCheck className="h-5 w-5" aria-hidden="true" /> No paid API calls
           </div>
         </div>
+
+        <LocalAltTextReviewLab />
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
           <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
