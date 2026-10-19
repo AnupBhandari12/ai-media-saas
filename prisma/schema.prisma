@@ -33,6 +33,20 @@ enum ProcessingJobStatus {
   CANCELLED
 }
 
+enum AiActionStatus {
+  RESERVED
+  PROCESSING
+  COMPLETED
+  FAILED
+  UNKNOWN
+  CANCELLED
+}
+
+enum AiQuotaPeriod {
+  DAY
+  MONTH
+}
+
 model Media {
   id      String      @id @default(cuid())
   ownerId String
@@ -139,7 +153,9 @@ model UsageEvent {
   toolId String?
   jobId  String?
 
-  job ProcessingJob? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  job               ProcessingJob?   @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  aiActionRequestId String?          @unique
+  aiActionRequest   AiActionRequest? @relation(fields: [aiActionRequestId], references: [id], onDelete: SetNull)
 
   occurredAt DateTime @default(now())
 
@@ -172,4 +188,57 @@ model BrandKit {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model AiActionRequest {
+  id             String @id @default(cuid())
+  ownerId        String
+  idempotencyKey String @db.VarChar(128)
+  inputHash      String @db.Char(64)
+
+  action       String         @db.VarChar(40)
+  status       AiActionStatus @default(RESERVED)
+  quotaCounted Boolean        @default(false)
+
+  quotaDayStart   DateTime
+  quotaMonthStart DateTime
+
+  provider String? @db.VarChar(40)
+  model    String? @db.VarChar(100)
+
+  inputTokens      Int?
+  outputTokens     Int?
+  estimatedCostUsd Decimal? @db.Decimal(18, 9)
+
+  resultJson Json?
+
+  reservationExpiresAt DateTime?
+  dispatchedAt         DateTime?
+  completedAt          DateTime?
+
+  usageEvent UsageEvent?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, idempotencyKey])
+  @@index([ownerId, status, createdAt])
+}
+
+model AiQuotaBucket {
+  id String @id @default(cuid())
+
+  ownerId     String
+  quotaKey    String        @db.VarChar(40)
+  period      AiQuotaPeriod
+  periodStart DateTime
+
+  used       Int @default(0)
+  limitValue Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, quotaKey, period, periodStart])
+  @@index([ownerId, periodStart])
 }
