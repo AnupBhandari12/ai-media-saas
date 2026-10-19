@@ -21,7 +21,7 @@ export async function GET() {
 
     try {
         const usage = await getAiUsageSnapshot({
-            usageEvent: prisma.usageEvent,
+            aiQuotaBucket: prisma.aiQuotaBucket,
             ownerId: userId,
         });
 
