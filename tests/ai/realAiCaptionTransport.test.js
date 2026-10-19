@@ -1,0 +1,11 @@
+import {test} from 'bun:test';
+import assert from 'node:assert/strict';
+import {requestRealCaption,realCaptionPayload,parseRealCaptionResponse} from '../../lib/ai/realAiCaptionTransport.mjs';
+const fakeData={status:'completed',model:'gpt-6-luna',output:[{type:'message',content:[{type:'output_text',text:'Ready for launch!'}]}],usage:{input_tokens:50,output_tokens:12}};
+test('provider payload is stateless and bounded',()=>{const p=realCaptionPayload(' Hello creators  '); assert.equal(p.store,false);assert.equal(p.model,'gpt-6-luna');assert.equal(p.input,'Hello creators');});
+test('invalid descriptions cannot create requests',()=>assert.throws(()=>realCaptionPayload('x')));
+test('default-off guard runs before transport',async()=>{let touched=false;await assert.rejects(()=>requestRealCaption({description:'Hello world',fetchFn:()=>{touched=true;}}),/BLOCKED/);assert.equal(touched,false);});
+test('server approval requires separate explicit opt-in',async()=>assert.rejects(()=>requestRealCaption({description:'Hello world',enabled:true,apiKey:'sk-test'}),/BLOCKED/));
+test('only injected mocked fetch is called after double approval',async()=>{let n=0; const r=await requestRealCaption({description:'Hello world',enabled:true,serverApproval:true,apiKey:'sk-test',fetchFn:async(_url,opt)=>{n++;assert.equal(JSON.parse(opt.body).store,false);return {ok:true,json:async()=>fakeData};}});assert.equal(n,1);assert.equal(r.usage.inputTokens,50);});
+test('wrong model and missing usage fail closed',()=>{assert.throws(()=>parseRealCaptionResponse({...fakeData,model:'fake'}));assert.throws(()=>parseRealCaptionResponse({...fakeData,usage:{}}));});
+test('bad status never hides provider uncertainty',async()=>assert.rejects(()=>requestRealCaption({description:'Hello world',enabled:true,serverApproval:true,apiKey:'sk-test',fetchFn:async()=>({ok:false})}),/no retry/));

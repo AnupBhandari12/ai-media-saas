@@ -1,0 +1,11 @@
+import {test} from 'bun:test';
+import assert from 'node:assert/strict';
+import {makeVisionPayload,requestRealAltText,parseVisionAltText} from '../../lib/ai/realAiVisionTransport.mjs';
+const image={mimeType:'image/png',bytes:new Uint8Array(80).fill(11),width:12,height:12};
+const resp={status:'completed',model:'gpt-6-luna',output:[{type:'message',content:[{type:'output_text',text:'A red cup on a wooden table.'}]}],usage:{input_tokens:450,output_tokens:16}};
+test('creates explicit vision image payload, no public image URL',()=>{const b=makeVisionPayload(image);assert.equal(b.store,false);assert.match(b.input[0].content[1].image_url,/^data:image\/png;base64,/);});
+test('caller must provide bounded trusted bytes',()=>assert.throws(()=>makeVisionPayload({...image,bytes:new Uint8Array(20)})));
+test('rejects excessive dimensions regardless of byte count',()=>assert.throws(()=>makeVisionPayload({...image,width:99999})));
+test('default guard prevents fetch and image encoding',async()=>{let called=false;await assert.rejects(()=>requestRealAltText({image,fetchFn:()=>{called=true;}}),/BLOCKED/);assert.equal(called,false);});
+test('fake fetch validates alt text and actual token usage',async()=>{const r=await requestRealAltText({image,enabled:true,serverApproval:true,apiKey:'sk-fake',fetchFn:async()=>({ok:true,json:async()=>resp})}); assert.equal(r.text,'A red cup on a wooden table.');assert.equal(r.usage.inputTokens,450);});
+test('missing provider usage is refused',()=>assert.throws(()=>parseVisionAltText({...resp,usage:{}})));

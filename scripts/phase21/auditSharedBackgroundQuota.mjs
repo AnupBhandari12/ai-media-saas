@@ -1,0 +1,10 @@
+import { readFileSync } from 'node:fs';
+import { auditBackgroundSharedQuotaSource } from '../../lib/ai/aiBackgroundSharedQuotaAudit.mjs';
+const schema = readFileSync('prisma/schema.prisma', 'utf8');
+const reviewSql = readFileSync('docs/phase21/10g_background_db_review.sql', 'utf8');
+const audit = auditBackgroundSharedQuotaSource({ schema, reviewSql });
+console.log('PHASE 21 / 10I SHARED QUOTA RECONCILIATION (READ ONLY):', audit.status);
+console.log('AiQuotaBucket fields found:', audit.sharedQuotaFields.join(', ') || '(none)');
+console.log('Bg Prisma review models present:', audit.bgSchemaPresent);
+for (const finding of audit.findings) console.log('-', finding);
+console.log('NO DB connection, migration, provider request, usage debit or cloud upload.');

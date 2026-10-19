@@ -33,6 +33,20 @@ enum ProcessingJobStatus {
   CANCELLED
 }
 
+enum AiActionStatus {
+  RESERVED
+  PROCESSING
+  COMPLETED
+  FAILED
+  UNKNOWN
+  CANCELLED
+}
+
+enum AiQuotaPeriod {
+  DAY
+  MONTH
+}
+
 model Media {
   id      String      @id @default(cuid())
   ownerId String
@@ -139,7 +153,11 @@ model UsageEvent {
   toolId String?
   jobId  String?
 
-  job ProcessingJob? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  job               ProcessingJob?   @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  aiActionRequestId String?          @unique
+  aiActionRequest   AiActionRequest? @relation(fields: [aiActionRequestId], references: [id], onDelete: SetNull)
+  bgCreditReservationId String? @unique @db.Uuid
+  bgCreditReservation BgCreditReservation? @relation(fields: [bgCreditReservationId], references: [requestId], onDelete: Restrict)
 
   occurredAt DateTime @default(now())
 
@@ -172,4 +190,137 @@ model BrandKit {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model AiActionRequest {
+  id             String @id @default(cuid())
+  ownerId        String
+  idempotencyKey String @db.VarChar(128)
+  inputHash      String @db.Char(64)
+
+  action       String         @db.VarChar(40)
+  status       AiActionStatus @default(RESERVED)
+  quotaCounted Boolean        @default(false)
+
+  quotaDayStart   DateTime
+  quotaMonthStart DateTime
+
+  provider String? @db.VarChar(40)
+  model    String? @db.VarChar(100)
+
+  inputTokens      Int?
+  outputTokens     Int?
+  estimatedCostUsd Decimal? @db.Decimal(18, 9)
+
+  resultJson Json?
+
+  reservationExpiresAt DateTime?
+  dispatchedAt         DateTime?
+  completedAt          DateTime?
+
+  usageEvent UsageEvent?
+  spendReservation AiSpendReservation?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, idempotencyKey])
+  @@index([ownerId, status, createdAt])
+}
+
+model AiQuotaBucket {
+  id String @id @default(cuid())
+
+  ownerId     String
+  quotaKey    String        @db.VarChar(40)
+  period      AiQuotaPeriod
+  periodStart DateTime
+
+  used       Int @default(0)
+  limitValue Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, quotaKey, period, periodStart])
+  @@index([ownerId, periodStart])
+}
+
+// Phase21 real-provider global spend gate. No automatic budget is granted.
+// Values are micro-USD: 1 USD = 1,000,000 units.
+model AiGlobalBudget {
+  id                String   @id
+  ceilingMicros     Int      @default(0)
+  committedMicros   Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+}
+
+model AiSpendReservation {
+  id                 String          @id @default(cuid())
+  requestId          String          @unique
+  ownerId            String
+  reservedMicros     Int
+  actualMicros       Int?
+  status             String          @default("RESERVED")
+  actionRequest      AiActionRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @default(now()) @updatedAt
+
+  @@index([ownerId, createdAt])
+}
+
+// Phase 21 background removal: private, credit-gated, fail-closed state.
+// These models do not enable a provider route or allocate paid credits.
+model BgCreditBucket {
+  id        String   @id @default(cuid())
+  scope     String   @db.VarChar(10)
+  scopeId   String   @db.VarChar(256)
+  period    String   @db.VarChar(10)
+  periodKey String   @db.VarChar(10)
+  committed Int      @default(0)
+  ceiling   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([scope, scopeId, period, periodKey])
+  @@index([scope, scopeId])
+}
+
+model BgCreditReservation {
+  id              String   @id @default(cuid())
+  requestId       String   @unique @db.Uuid
+  ownerId         String
+  imageSha256     String   @db.Char(64)
+  status          String   @default("RESERVED") @db.VarChar(20)
+  creditsReserved Int      @default(1)
+  dispatchedAt    DateTime?
+  quotaDayStart   String   @db.VarChar(10)
+  quotaMonthStart String   @db.VarChar(7)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
+  storedAsset     BgStoredAsset?
+  usageEvent      UsageEvent?
+
+  @@index([ownerId, createdAt])
+}
+
+model BgStoredAsset {
+  id             String   @id @default(cuid())
+  requestId      String   @unique @db.Uuid
+  ownerId        String
+  status         String   @default("PENDING") @db.VarChar(20)
+  storageKey     String   @unique @db.VarChar(300)
+  outputSha256   String   @db.Char(64)
+  originalSha256 String   @db.Char(64)
+  bytes          Int
+  width          Int
+  height         Int
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+  reservation    BgCreditReservation @relation(fields: [requestId], references: [requestId], onDelete: Restrict)
+
+  @@index([ownerId, createdAt])
+  @@index([ownerId, expiresAt])
 }
