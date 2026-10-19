@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import LocalAltTextReviewLab from "@/components/ai/LocalAltTextReviewLab";
+import RealAltTextLab from "@/components/ai/RealAltTextLab";
 
 import {
   ALT_TEXT_EXAMPLES,
@@ -183,7 +184,7 @@ export default function AltTextGeneratorClient() {
         <div className="mt-4 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
           <div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-amber-800">
-              <FlaskConical className="h-4 w-4" aria-hidden="true" /> Local mock only
+              <FlaskConical className="h-4 w-4" aria-hidden="true" /> Local mock + Real AI beta
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Alt Text Generator</h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
@@ -192,10 +193,11 @@ export default function AltTextGeneratorClient() {
             </p>
           </div>
           <div className="inline-flex items-center gap-2 self-start rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900">
-            <ShieldCheck className="h-5 w-5" aria-hidden="true" /> No paid API calls
+            <ShieldCheck className="h-5 w-5" aria-hidden="true" /> Mock section stays free
           </div>
         </div>
 
+        <RealAltTextLab />
         <LocalAltTextReviewLab />
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
@@ -303,7 +305,7 @@ export default function AltTextGeneratorClient() {
             </section>
             <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4 text-xs leading-6 text-indigo-950">
               <p className="flex items-center gap-2 font-bold"><ShieldCheck className="h-4 w-4" aria-hidden="true" /> Browser-only image preview</p>
-              <p className="mt-1">No image bytes are transmitted. The server receives only the description you type. No OpenAI calls, no quota usage and no database writes.</p>
+              <p className="mt-1">In this local mock section only, no image bytes are transmitted. The server receives only the description you type. The Real AI beta above is a separate billable workflow.</p>
               <p className="mt-2">A real vision-based alt text feature will require separate image upload security, provider cost controls and explicit enablement.</p>
             </div>
             <Link href="/tools/ai/caption-generator" className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-indigo-700 hover:text-indigo-900">
