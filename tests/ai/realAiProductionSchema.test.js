@@ -1,0 +1,10 @@
+import {test, expect} from "bun:test";
+import {readFileSync} from "node:fs";
+import { AI_BUDGET_RESERVATION_MICROS, requireAiReservationMicros, usageToMicros } from "../../lib/ai/realAiGlobalBudget.mjs";
+const schema = readFileSync(new URL("../../prisma/schema.prisma", import.meta.url), "utf8");
+const sql = readFileSync(new URL("../../prisma/migrations/20261019213000_phase21_real_budget_guard/migration.sql", import.meta.url), "utf8");
+test("adds global spend and owned reservation with no old table removal",()=>{ expect(schema).toContain("model AiGlobalBudget {"); expect(schema).toContain("model AiSpendReservation {"); expect(sql).not.toMatch(/^\s*(DROP|TRUNCATE|DELETE)\b/im); });
+test("migration never inserts a spend budget or modifies existing records",()=>{expect(sql).not.toMatch(/\bINSERT\s+INTO\b/i);expect(sql).not.toMatch(/^\s*UPDATE\b/im);});
+test("caption and alt text reservation sizes cannot come from caller input",()=>{expect(requireAiReservationMicros("CAPTION",1000)).toBe(1000);expect(AI_BUDGET_RESERVATION_MICROS.ALT_TEXT).toBe(30000);expect(()=>requireAiReservationMicros("CAPTION",2000)).toThrow();});
+test("unsupported actions and noninteger money fail closed",()=>{expect(()=>requireAiReservationMicros("REMOVE_BG",1000)).toThrow();expect(()=>requireAiReservationMicros("CAPTION",1.4)).toThrow();});
+test("usage estimate converts conservatively into integer micro dollars",()=>{expect(usageToMicros(0.00012311)).toBe(124);expect(()=>usageToMicros(-1)).toThrow();});

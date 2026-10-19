@@ -217,6 +217,7 @@ model AiActionRequest {
   completedAt          DateTime?
 
   usageEvent UsageEvent?
+  spendReservation AiSpendReservation?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -241,4 +242,28 @@ model AiQuotaBucket {
 
   @@unique([ownerId, quotaKey, period, periodStart])
   @@index([ownerId, periodStart])
+}
+
+// Phase21 real-provider global spend gate. No automatic budget is granted.
+// Values are micro-USD: 1 USD = 1,000,000 units.
+model AiGlobalBudget {
+  id                String   @id
+  ceilingMicros     Int      @default(0)
+  committedMicros   Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+}
+
+model AiSpendReservation {
+  id                 String          @id @default(cuid())
+  requestId          String          @unique
+  ownerId            String
+  reservedMicros     Int
+  actualMicros       Int?
+  status             String          @default("RESERVED")
+  actionRequest      AiActionRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @default(now()) @updatedAt
+
+  @@index([ownerId, createdAt])
 }
