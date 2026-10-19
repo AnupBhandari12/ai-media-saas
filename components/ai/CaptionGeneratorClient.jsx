@@ -15,6 +15,8 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import LocalCaptionDraftLab from "@/components/ai/LocalCaptionDraftLab";
+
 import {
   CAPTION_EXAMPLES,
   CAPTION_MAX_CHARACTERS,
@@ -183,6 +185,8 @@ export default function CaptionGeneratorClient() {
             <ShieldCheck className="h-5 w-5" aria-hidden="true" /> No paid API calls
           </div>
         </div>
+
+        <LocalCaptionDraftLab />
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
           <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
