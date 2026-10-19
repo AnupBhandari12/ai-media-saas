@@ -156,6 +156,8 @@ model UsageEvent {
   job               ProcessingJob?   @relation(fields: [jobId], references: [id], onDelete: SetNull)
   aiActionRequestId String?          @unique
   aiActionRequest   AiActionRequest? @relation(fields: [aiActionRequestId], references: [id], onDelete: SetNull)
+  bgCreditReservationId String? @unique @db.Uuid
+  bgCreditReservation BgCreditReservation? @relation(fields: [bgCreditReservationId], references: [requestId], onDelete: Restrict)
 
   occurredAt DateTime @default(now())
 
@@ -298,6 +300,7 @@ model BgCreditReservation {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @default(now()) @updatedAt
   storedAsset     BgStoredAsset?
+  usageEvent      UsageEvent?
 
   @@index([ownerId, createdAt])
 }

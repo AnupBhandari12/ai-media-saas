@@ -7,6 +7,7 @@ import {
   Sparkles, X, BadgeCheck, Info, Layers3, UploadCloud, ScanLine,
 } from "lucide-react";
 import LocalSolidBackgroundLab from "@/components/ai/LocalSolidBackgroundLab";
+import RealBackgroundLab from "@/components/ai/RealBackgroundLab";
 import { parseCaptionQuota } from "@/lib/ai/aiCaptionUi.mjs";
 import {
   BACKGROUND_QUOTA_ENDPOINT, BACKGROUND_PROVIDER_READY,
@@ -139,13 +140,13 @@ export default function BackgroundRemoverClient() {
         <div className="mt-5 flex flex-wrap items-start justify-between gap-5">
           <div className="max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-900">
-              <LockKeyhole className="h-4 w-4" aria-hidden="true" /> Preparation only · No processing
+              <LockKeyhole className="h-4 w-4" aria-hidden="true" /> Free browser preview · No processing
             </span>
             <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">Background Remover</h1>
-            <p className="mt-3 text-sm leading-6 text-slate-600">Preview your source image locally. A free, browser-only editor below can clear connected solid-color backgrounds. <strong>Real AI background removal is still disabled.</strong></p>
+            <p className="mt-3 text-sm leading-6 text-slate-600">Preview your source image locally. The free browser editor below can clear solid-color backgrounds. A separate opt-in paid beta is listed below; it is disabled unless the operator enables it.</p>
           </div>
           <span className="inline-flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900">
-            <ShieldCheck className="h-5 w-5" aria-hidden="true" /> No image uploads · $0 AI cost
+            <ShieldCheck className="h-5 w-5" aria-hidden="true" /> Free preview · $0 AI cost
           </span>
         </div>
 
@@ -153,7 +154,7 @@ export default function BackgroundRemoverClient() {
           <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 p-5 sm:p-7">
               <h2 className="flex items-center gap-2 text-lg font-bold text-slate-900"><UploadCloud className="h-5 w-5 text-indigo-600" aria-hidden="true" /> Your source image</h2>
-              <p className="mt-1 text-xs leading-5 text-slate-500">Local browser preview only; no network image upload or AI provider connection.</p>
+              <p className="mt-1 text-xs leading-5 text-slate-500">This preview stays in your browser. The separately labeled paid beta below uploads only if you opt in and it is enabled.</p>
             </div>
             <div className="space-y-5 p-5 sm:p-7">
               <div onDragOver={(event) => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={onDrop}
@@ -182,8 +183,8 @@ export default function BackgroundRemoverClient() {
                 </div>
               )}
               <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4 text-xs leading-6 text-indigo-950">
-                <p className="flex items-center gap-2 font-bold"><Info className="h-4 w-4" /> Why no Remove button yet?</p>
-                <p className="mt-1">We are preparing the safe file workflow first. Real background removal requires a separately reviewed image provider, authenticated upload, quota reservation, output storage and cost limits.</p>
+                <p className="flex items-center gap-2 font-bold"><Info className="h-4 w-4" /> Why is this button disabled?</p>
+                <p className="mt-1">This free preview is separate from the paid remove.bg beta near the bottom of the page. The beta requires operator-controlled credits, private storage, and explicit consent.</p>
               </div>
             </div>
           </section>
@@ -211,10 +212,10 @@ export default function BackgroundRemoverClient() {
                   <p className="flex items-center gap-2 text-xs font-semibold text-slate-700"><ScanLine className="h-4 w-4 text-indigo-600" /> Original · Not edited by AI</p>
                   <span className="text-xs font-semibold text-slate-500">AI “after” not available</span>
                 </div>
-                <button type="button" disabled aria-disabled="true" title="Background removal is not enabled in this commit" className="mt-5 inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-slate-200 px-5 py-3 text-sm font-semibold text-slate-500">
+                <button type="button" disabled aria-disabled="true" title="Free local preview has no paid provider" className="mt-5 inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-slate-200 px-5 py-3 text-sm font-semibold text-slate-500">
                   <Sparkles className="h-4 w-4" /> Remove background — not available yet
                 </button>
-                {!BACKGROUND_PROVIDER_READY && <p className="mt-2 text-center text-xs leading-5 text-slate-500">No provider, no generated result, no downloadable output, no charge.</p>}
+                {!BACKGROUND_PROVIDER_READY && <p className="mt-2 text-center text-xs leading-5 text-slate-500">This free preview does not call a provider or spend credits.</p>}
               </div>
             </section>
 
@@ -231,6 +232,7 @@ export default function BackgroundRemoverClient() {
           </div>
         </div>
         <LocalSolidBackgroundLab key={previewUrl || 'no-image'} file={photo} />
+        <RealBackgroundLab />
       </div>
     </main>
   );
