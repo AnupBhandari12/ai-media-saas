@@ -1,0 +1,10 @@
+import {test} from 'bun:test';
+import assert from 'node:assert/strict';
+import {planPrivateAiPng} from '../../lib/ai/realAiPrivateResultPlan.mjs';
+const png=new Uint8Array(64);png.set([137,80,78,71,13,10,26,10]);
+const uid='11111111-2222-4333-8444-555555555555';
+const args={ownerId:'user_1234567',jobId:'example-job-123',pngBytes:png,verifiedSourceSha:'a'.repeat(64),uuidFn:()=>uid};
+test('opaque private plan cannot upload or publish',()=>{const r=planPrivateAiPng(args);assert.equal(r.uploadAllowed,false);assert.equal(r.publicUrl,null);assert.match(r.storageKey,/^ai-private\//);});
+test('rejects missing verified source',()=>assert.throws(()=>planPrivateAiPng({...args,verifiedSourceSha:'short'})));
+test('rejects invalid input signature',()=>assert.throws(()=>planPrivateAiPng({...args,pngBytes:new Uint8Array(64)})));
+test('rejects nonopaque IDs',()=>assert.throws(()=>planPrivateAiPng({...args,uuidFn:()=> 'owner-name'})));
