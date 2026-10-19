@@ -6,6 +6,7 @@ import {
   ArrowLeft, ImagePlus, ImageOff, LockKeyhole, ShieldCheck, LoaderCircle,
   Sparkles, X, BadgeCheck, Info, Layers3, UploadCloud, ScanLine,
 } from "lucide-react";
+import LocalSolidBackgroundLab from "@/components/ai/LocalSolidBackgroundLab";
 import { parseCaptionQuota } from "@/lib/ai/aiCaptionUi.mjs";
 import {
   BACKGROUND_QUOTA_ENDPOINT, BACKGROUND_PROVIDER_READY,
@@ -141,10 +142,10 @@ export default function BackgroundRemoverClient() {
               <LockKeyhole className="h-4 w-4" aria-hidden="true" /> Preparation only · No processing
             </span>
             <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">Background Remover</h1>
-            <p className="mt-3 text-sm leading-6 text-slate-600">Check and preview an image locally before a future AI background-removal workflow. Your original image is unchanged. <strong>No background is removed in this phase.</strong></p>
+            <p className="mt-3 text-sm leading-6 text-slate-600">Preview your source image locally. A free, browser-only editor below can clear connected solid-color backgrounds. <strong>Real AI background removal is still disabled.</strong></p>
           </div>
           <span className="inline-flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900">
-            <ShieldCheck className="h-5 w-5" aria-hidden="true" /> No uploads · $0 API cost
+            <ShieldCheck className="h-5 w-5" aria-hidden="true" /> No image uploads · $0 AI cost
           </span>
         </div>
 
@@ -207,8 +208,8 @@ export default function BackgroundRemoverClient() {
                   )}
                 </div>
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <p className="flex items-center gap-2 text-xs font-semibold text-slate-700"><ScanLine className="h-4 w-4 text-indigo-600" /> Original · Not edited</p>
-                  <span className="text-xs font-semibold text-slate-500">No “after” image available</span>
+                  <p className="flex items-center gap-2 text-xs font-semibold text-slate-700"><ScanLine className="h-4 w-4 text-indigo-600" /> Original · Not edited by AI</p>
+                  <span className="text-xs font-semibold text-slate-500">AI “after” not available</span>
                 </div>
                 <button type="button" disabled aria-disabled="true" title="Background removal is not enabled in this commit" className="mt-5 inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-slate-200 px-5 py-3 text-sm font-semibold text-slate-500">
                   <Sparkles className="h-4 w-4" /> Remove background — not available yet
@@ -229,6 +230,7 @@ export default function BackgroundRemoverClient() {
             </Link>
           </div>
         </div>
+        <LocalSolidBackgroundLab key={previewUrl || 'no-image'} file={photo} />
       </div>
     </main>
   );
