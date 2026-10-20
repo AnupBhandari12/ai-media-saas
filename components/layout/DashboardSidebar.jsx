@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   Wrench,
   Workflow,
+  Sparkles,
   ImageIcon,
   Video,
   Library,
@@ -43,6 +44,14 @@ export default function DashboardSidebar() {
         >
           <Workflow size={18} />
           Workflows
+        </Link>
+
+        <Link
+          href="/ai-workspace"
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-background hover:text-foreground"
+        >
+          <Sparkles size={18} />
+          AI Workspace
         </Link>
 
         <Link

@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   Wrench,
   Workflow,
+  Sparkles,
   ImageIcon,
   Video,
   Library,
@@ -124,6 +125,15 @@ export default function DashboardTopbar() {
           >
             <Workflow size={18} />
             Workflows
+          </Link>
+
+          <Link
+            href="/ai-workspace"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted"
+          >
+            <Sparkles size={18} />
+            AI Workspace
           </Link>
 
           <Link
