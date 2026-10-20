@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   LayoutDashboard,
   Wrench,
+  Workflow,
   ImageIcon,
   Video,
   Library,
@@ -34,6 +35,14 @@ export default function DashboardSidebar() {
         >
           <Wrench size={18} />
           Tools
+        </Link>
+
+        <Link
+          href="/workflows"
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-background hover:text-foreground"
+        >
+          <Workflow size={18} />
+          Workflows
         </Link>
 
         <Link

@@ -9,6 +9,7 @@ import {
   X,
   LayoutDashboard,
   Wrench,
+  Workflow,
   ImageIcon,
   Video,
   Library,
@@ -114,6 +115,15 @@ export default function DashboardTopbar() {
           >
             <Wrench size={18} />
             Tools
+          </Link>
+
+          <Link
+            href="/workflows"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted"
+          >
+            <Workflow size={18} />
+            Workflows
           </Link>
 
           <Link
