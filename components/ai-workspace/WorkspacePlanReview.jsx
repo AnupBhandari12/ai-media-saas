@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { acknowledgeWorkspacePlan, createWorkspaceReview } from "@/lib/ai-workspace/reviewGate";
+import WorkspaceWebsiteRun from "@/components/ai-workspace/WorkspaceWebsiteRun";
 
 export default function WorkspacePlanReview({ plan }) {
   const [checked, setChecked] = useState(false);
@@ -55,13 +56,16 @@ export default function WorkspacePlanReview({ plan }) {
         <div role="status" className="rounded-xl border border-primary/20 bg-primary/5 p-4">
           <p className="text-sm font-semibold text-foreground">Plan acknowledged · no action executed</p>
           <p className="mt-1 text-xs leading-5 text-muted">
-            Open the existing workflow to upload/select your file and review its own settings.
-            This acknowledgement is not execution permission or a quota/security check.
+            You may open the existing approved workflow to configure and run it. For Website Ready only,
+            you can also choose a local image and click Run below. Review alone executes nothing.
           </p>
           <Link href={receipt.workflowHref}
             className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/5">
             Open approved workflow <ArrowRight size={18} aria-hidden="true" />
           </Link>
+          {plan.workflowId === "WF-06" && plan.variantId === "image" && (
+            <WorkspaceWebsiteRun plan={plan} />
+          )}
         </div>
       )}
     </div>

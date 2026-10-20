@@ -90,7 +90,7 @@ export default function AiWorkspaceUnderstanding() {
               </li>
             ))}
           </ol>
-          <WorkspacePlanReview plan={result.plan} />
+          <WorkspacePlanReview key={`${result.plan.workflowId}:${result.plan.variantId}:${result.plan.steps.map((step) => step.toolId).join(",")}`} plan={result.plan} />
         </section>
       )}
     </div>
