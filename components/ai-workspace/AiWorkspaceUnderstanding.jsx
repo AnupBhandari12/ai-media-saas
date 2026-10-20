@@ -32,6 +32,7 @@ export default function AiWorkspaceUnderstanding({ realAiEnabled = false }) {
               Describe ONE image or photos-to-PDF result. Free local preview uses conservative rules;
               the optional AI interpreter is a separate, explicitly confirmed paid text request.
               Neither preview executes media tools. Acknowledgment only reveals approved execution controls.
+              Saved plans are optional and separate from processing history.
             </p>
           </div>
         </div>
@@ -39,7 +40,7 @@ export default function AiWorkspaceUnderstanding({ realAiEnabled = false }) {
 
       <form onSubmit={preview} className="rounded-2xl border border-border bg-surface p-5 sm:p-6">
         <label htmlFor="workspace-prompt" className="block text-sm font-semibold text-foreground">
-          What do you want to prepare?
+          Step 1 · Describe your output
         </label>
         <textarea
           id="workspace-prompt"
@@ -48,9 +49,14 @@ export default function AiWorkspaceUnderstanding({ realAiEnabled = false }) {
           value={prompt}
           onChange={(event) => { setPrompt(event.target.value); setResult(null); }}
           placeholder="For example: Resize this photo for my website"
+          aria-describedby="workspace-prompt-hint"
           className="mt-3 w-full resize-y rounded-xl border border-border bg-background p-4 text-sm text-foreground outline-none focus:border-primary"
         />
-        <button type="submit" className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white hover:bg-primary-hover">
+        <div id="workspace-prompt-hint" className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+          <span>One destination at a time. Avoid passwords, API keys and private details.</span>
+          <span aria-live="off">{prompt.length}/500 characters</span>
+        </div>
+        <button type="submit" className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <ClipboardList size={18} aria-hidden="true" /> Preview safe plan
         </button>
       </form>
@@ -58,7 +64,7 @@ export default function AiWorkspaceUnderstanding({ realAiEnabled = false }) {
       <WorkspaceAiPlannerPanel key={prompt} prompt={prompt} enabled={realAiEnabled} onOutcome={setResult} />
 
       <section aria-label="Prompt understanding examples">
-        <h2 className="font-semibold text-foreground">Try a natural-language example</h2>
+        <h2 className="font-semibold text-foreground">Or choose a supported example</h2>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           {UNDERSTANDING_EXAMPLES.map((item) => (
             <button key={item.workflowId} type="button" onClick={() => selectExample(item.prompt)}
@@ -78,7 +84,7 @@ export default function AiWorkspaceUnderstanding({ realAiEnabled = false }) {
         </div>
       )}
       {result?.kind === "PLAN" && (
-        <section aria-label="Approved plan preview" className="rounded-2xl border border-primary/20 bg-surface p-5 sm:p-6">
+        <section aria-label="Approved plan preview" aria-live="polite" className="rounded-2xl border border-primary/20 bg-surface p-5 sm:p-6">
           <div className="flex items-start gap-3">
             <Sparkles size={22} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
             <div>

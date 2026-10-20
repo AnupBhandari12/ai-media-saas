@@ -14,8 +14,9 @@ export default function AiWorkspacePage() {
       <p className="text-sm font-semibold uppercase tracking-wide text-primary">AI Media · Phase 23</p>
       <h1 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">AI Workspace</h1>
       <p className="mb-8 mt-3 max-w-3xl text-sm leading-7 text-muted sm:text-base">
-        Turn a request into a safe, inspectable workflow plan. Stage 04 reuses the existing Website Ready local processor after an explicit review, file selection and Run click.
-        Other approved workflows run on their existing pages. Optional text-only AI planning is disabled by default and requires explicit consent and a server-side quota/budget reservation.
+        Describe one supported photo or photos-to-PDF output, preview its registered steps, and review before acting.
+        Website Ready can run locally after your explicit acknowledgment, file selection and Run click; other workflows open on their existing pages.
+        Saving plan history is optional. Paid text-only AI planning stays disabled by default and requires separate consent and server-side budget controls.
       </p>
       <AiWorkspaceUnderstanding realAiEnabled={realAiEnabled} />
     </main>
