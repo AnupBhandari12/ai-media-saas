@@ -36,8 +36,9 @@ export default function WorkspacePlanReview({ plan }) {
         <div>
           <h3 className="font-semibold text-foreground">Step 3 · Review & acknowledge</h3>
           <p className="mt-1 text-sm leading-6 text-muted">
-            Verify the destination and {review.steps.length} listed steps above. This preview makes no upload,
-            provider call, credit charge, or file change. The final workflow has its own controls.
+            Verify the destination and {review.steps.length} listed steps above. Review/acknowledgment
+            does not upload files, call providers, or start processing. A separately approved AI interpretation
+            request may already have used quota. The final workflow has its own controls.
           </p>
         </div>
       </div>

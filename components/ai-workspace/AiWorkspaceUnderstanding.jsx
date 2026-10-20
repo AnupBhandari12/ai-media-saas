@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { ClipboardList, ShieldCheck, Sparkles } from "lucide-react";
 import WorkspacePlanReview from "@/components/ai-workspace/WorkspacePlanReview";
+import WorkspaceAiPlannerPanel from "@/components/ai-workspace/WorkspaceAiPlannerPanel";
 import { UNDERSTANDING_EXAMPLES, understandWorkspacePrompt } from "@/lib/ai-workspace/interpretPrompt";
 
-export default function AiWorkspaceUnderstanding() {
+export default function AiWorkspaceUnderstanding({ realAiEnabled = false }) {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState(null);
 
@@ -27,9 +28,9 @@ export default function AiWorkspaceUnderstanding() {
           <div>
             <h2 className="font-semibold text-foreground">Prompt understanding & review · safe beta</h2>
             <p className="mt-2 text-sm leading-6 text-muted">
-              Describe ONE image or photos-to-PDF result. This stage recognizes selected English phrases
-              using conservative local rules, not a real AI model. It only previews registered steps;
-              it never uploads files, spends credits, or starts processing. Acknowledgment only reveals an approved workflow link.
+              Describe ONE image or photos-to-PDF result. Free local preview uses conservative rules;
+              the optional AI interpreter is a separate, explicitly confirmed paid text request.
+              Neither preview executes media tools. Acknowledgment only reveals approved execution controls.
             </p>
           </div>
         </div>
@@ -52,6 +53,8 @@ export default function AiWorkspaceUnderstanding() {
           <ClipboardList size={18} aria-hidden="true" /> Preview safe plan
         </button>
       </form>
+
+      <WorkspaceAiPlannerPanel key={prompt} prompt={prompt} enabled={realAiEnabled} onOutcome={setResult} />
 
       <section aria-label="Prompt understanding examples">
         <h2 className="font-semibold text-foreground">Try a natural-language example</h2>
@@ -79,7 +82,7 @@ export default function AiWorkspaceUnderstanding() {
             <Sparkles size={22} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
             <div>
               <h2 className="text-lg font-bold text-foreground">{result.plan.workflowName}</h2>
-              <p className="mt-1 text-sm text-muted">{result.plan.variantName} · Preview only · No cost or execution</p>
+              <p className="mt-1 text-sm text-muted">{result.plan.variantName} · Workflow preview only · No media processing</p>
             </div>
           </div>
           <ol className="mt-5 space-y-3">
