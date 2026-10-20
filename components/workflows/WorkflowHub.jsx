@@ -44,11 +44,11 @@ export default function WorkflowHub() {
         <div className="flex gap-3">
           <ClipboardList className="mt-0.5 shrink-0 text-primary" size={22} aria-hidden="true" />
           <div>
-            <h2 className="font-semibold text-foreground">Planning preview • Stage 01</h2>
+            <h2 className="font-semibold text-foreground">Workflows • Photo betas and plan previews</h2>
             <p className="mt-1 text-sm leading-6 text-muted">
-              These are step previews, not working one-click conversions yet. No
-              files are uploaded, no credits are used, and paid AI stays off.
-              Select a workflow to inspect its existing tools.
+              Website Ready and WhatsApp Ready photos can run locally in your browser.
+              The remaining workflows are previews only. Video is not enabled.
+              No file upload, paid AI call or credits in these photo betas.
             </p>
           </div>
         </div>
@@ -80,7 +80,7 @@ export default function WorkflowHub() {
       </div>
 
       <p className="mt-5 text-sm text-muted" aria-live="polite">
-        {visible.length} of {workflows.length} planned workflows
+        {visible.length} of {workflows.length} workflows
       </p>
 
       {visible.length === 0 ? (
@@ -100,7 +100,7 @@ export default function WorkflowHub() {
                 <div className="flex items-center justify-between gap-2">
                   <span className="rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">{workflow.id}</span>
                   <span className="rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-semibold text-muted">
-                    {workflow.priority} • Planned
+                    {workflow.priority} • {["WF-01", "WF-06"].includes(workflow.id) ? "Photo beta" : "Planned"}
                   </span>
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">{workflow.name}</h3>
@@ -108,6 +108,11 @@ export default function WorkflowHub() {
                 {workflow.id === "WF-06" && (
                   <Link href="/workflows/website-ready" className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover">
                     Try Website Ready (local beta) <ArrowRight size={17} aria-hidden="true" />
+                  </Link>
+                )}
+                {workflow.id === "WF-01" && (
+                  <Link href="/workflows/whatsapp-ready" className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover">
+                    Try WhatsApp Ready (photo beta) <ArrowRight size={17} aria-hidden="true" />
                   </Link>
                 )}
                 <button
@@ -154,7 +159,7 @@ export default function WorkflowHub() {
                       ))}
                     </ol>
                     <p className="mt-4 text-xs leading-5 text-muted">
-                      Step compatibility, errors, size limits and automatic chaining will be verified in later stages.
+                      Only the photo-beta links above execute today. All other variants and workflows are previews.
                     </p>
                   </div>
                 )}
