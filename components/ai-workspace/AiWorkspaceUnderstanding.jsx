@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowRight, ClipboardList, ShieldCheck, Sparkles } from "lucide-react";
+import { ClipboardList, ShieldCheck, Sparkles } from "lucide-react";
+import WorkspacePlanReview from "@/components/ai-workspace/WorkspacePlanReview";
 import { UNDERSTANDING_EXAMPLES, understandWorkspacePrompt } from "@/lib/ai-workspace/interpretPrompt";
 
 export default function AiWorkspaceUnderstanding() {
@@ -25,11 +25,11 @@ export default function AiWorkspaceUnderstanding() {
         <div className="flex items-start gap-3">
           <ShieldCheck size={22} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
           <div>
-            <h2 className="font-semibold text-foreground">Prompt understanding · safe beta</h2>
+            <h2 className="font-semibold text-foreground">Prompt understanding & review · safe beta</h2>
             <p className="mt-2 text-sm leading-6 text-muted">
               Describe ONE image or photos-to-PDF result. This stage recognizes selected English phrases
               using conservative local rules, not a real AI model. It only previews registered steps;
-              it never uploads files, spends credits, or starts processing.
+              it never uploads files, spends credits, or starts processing. Acknowledgment only reveals an approved workflow link.
             </p>
           </div>
         </div>
@@ -90,13 +90,7 @@ export default function AiWorkspaceUnderstanding() {
               </li>
             ))}
           </ol>
-          <p className="mt-5 text-sm text-muted">
-            Plan preview only. To process a file, open the existing approved workflow and review its options.
-          </p>
-          <Link href={`/workflows/${result.plan.workflowSlug}`}
-            className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/5">
-            Open existing workflow <ArrowRight size={18} aria-hidden="true" />
-          </Link>
+          <WorkspacePlanReview plan={result.plan} />
         </section>
       )}
     </div>
