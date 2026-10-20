@@ -12,7 +12,7 @@ export default function JobFormReadyPage() {
       <h1 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">Job / Form Ready</h1>
       <p className="mt-3 max-w-3xl text-sm leading-7 text-muted sm:text-base">
         Prepare a photo with chosen pixel dimensions and a file-size goal using existing local tools.
-        Always follow the receiving form's exact rules. This does not verify facial, biometric or official ID requirements.
+        Always follow the receiving form&apos;s exact rules. This does not verify facial, biometric or official ID requirements.
       </p>
       <JobFormReadyWorkspace />
     </main>
