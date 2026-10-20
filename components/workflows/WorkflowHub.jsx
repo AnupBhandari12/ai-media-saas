@@ -46,8 +46,8 @@ export default function WorkflowHub() {
           <div>
             <h2 className="font-semibold text-foreground">Workflows • Photo betas and plan previews</h2>
             <p className="mt-1 text-sm leading-6 text-muted">
-              Website, WhatsApp, Email, Job / Form, Instagram, Facebook, LinkedIn, YouTube and E-commerce image branches run locally in your browser.
-              PDF, reel and video variants remain previews only.
+              Website, WhatsApp, Email, Job / Form, Instagram, Facebook, LinkedIn, YouTube and E-commerce image branches plus Student Notes photos-to-PDF run locally in your browser.
+              Other PDF variants, OCR orchestration, reel, video and AI note summaries remain previews only.
               No file upload, paid AI call or credits in these browser betas.
             </p>
           </div>
@@ -100,7 +100,7 @@ export default function WorkflowHub() {
                 <div className="flex items-center justify-between gap-2">
                   <span className="rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">{workflow.id}</span>
                   <span className="rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-semibold text-muted">
-                    {workflow.priority} • {["WF-01", "WF-02", "WF-03", "WF-04", "WF-05", "WF-06", "WF-07", "WF-08", "WF-09"].includes(workflow.id) ? "Image beta" : "Planned"}
+                    {workflow.priority} • {["WF-01", "WF-02", "WF-03", "WF-04", "WF-05", "WF-06", "WF-07", "WF-08", "WF-09", "WF-10"].includes(workflow.id) ? "Local beta" : "Planned"}
                   </span>
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">{workflow.name}</h3>
@@ -150,6 +150,11 @@ export default function WorkflowHub() {
                     Try E-commerce Product Pack (photo beta) <ArrowRight size={17} aria-hidden="true" />
                   </Link>
                 )}
+                {workflow.id === "WF-10" && (
+                  <Link href="/workflows/student-notes-pack" className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover">
+                    Try Student Notes Pack (photos to PDF beta) <ArrowRight size={17} aria-hidden="true" />
+                  </Link>
+                )}
                 <button
                   type="button" onClick={() => toggle(workflow)}
                   aria-expanded={open}
@@ -194,7 +199,7 @@ export default function WorkflowHub() {
                       ))}
                     </ol>
                     <p className="mt-4 text-xs leading-5 text-muted">
-                      Only approved browser image-beta links execute. PDF, reel, video and other workflow variants remain previews. Always inspect final crops and receiving requirements.
+                      Only approved browser image/photo workflows and Student Notes photos-to-PDF execute. OCR orchestration, AI summaries, reel, video and other PDF variants remain previews. Always inspect final outputs and receiving requirements.
                     </p>
                   </div>
                 )}
