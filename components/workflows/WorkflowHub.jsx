@@ -46,9 +46,9 @@ export default function WorkflowHub() {
           <div>
             <h2 className="font-semibold text-foreground">Workflows • Photo betas and plan previews</h2>
             <p className="mt-1 text-sm leading-6 text-muted">
-              Website Ready and WhatsApp Ready photos can run locally in your browser.
-              The remaining workflows are previews only. Video is not enabled.
-              No file upload, paid AI call or credits in these photo betas.
+              Website Ready, WhatsApp Ready and Email Ready image attachments run locally in your browser.
+              Other workflow variants are previews only; email PDF and videos are not enabled.
+              No file upload, paid AI call or credits in these browser betas.
             </p>
           </div>
         </div>
@@ -100,7 +100,7 @@ export default function WorkflowHub() {
                 <div className="flex items-center justify-between gap-2">
                   <span className="rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">{workflow.id}</span>
                   <span className="rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-semibold text-muted">
-                    {workflow.priority} • {["WF-01", "WF-06"].includes(workflow.id) ? "Photo beta" : "Planned"}
+                    {workflow.priority} • {["WF-01", "WF-06", "WF-07"].includes(workflow.id) ? "Photo beta" : "Planned"}
                   </span>
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">{workflow.name}</h3>
@@ -113,6 +113,11 @@ export default function WorkflowHub() {
                 {workflow.id === "WF-01" && (
                   <Link href="/workflows/whatsapp-ready" className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover">
                     Try WhatsApp Ready (photo beta) <ArrowRight size={17} aria-hidden="true" />
+                  </Link>
+                )}
+                {workflow.id === "WF-07" && (
+                  <Link href="/workflows/email-ready" className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover">
+                    Try Email Ready (image beta) <ArrowRight size={17} aria-hidden="true" />
                   </Link>
                 )}
                 <button
@@ -159,7 +164,7 @@ export default function WorkflowHub() {
                       ))}
                     </ol>
                     <p className="mt-4 text-xs leading-5 text-muted">
-                      Only the photo-beta links above execute today. All other variants and workflows are previews.
+                      Only approved browser image-beta links above execute today. PDF, video and all other workflow variants remain previews.
                     </p>
                   </div>
                 )}
