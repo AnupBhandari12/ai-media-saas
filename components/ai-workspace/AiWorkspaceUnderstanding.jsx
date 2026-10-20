@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ClipboardList, ShieldCheck, Sparkles } from "lucide-react";
 import WorkspacePlanReview from "@/components/ai-workspace/WorkspacePlanReview";
 import WorkspaceAiPlannerPanel from "@/components/ai-workspace/WorkspaceAiPlannerPanel";
+import WorkspaceHistoryPanel from "@/components/ai-workspace/WorkspaceHistoryPanel";
 import { UNDERSTANDING_EXAMPLES, understandWorkspacePrompt } from "@/lib/ai-workspace/interpretPrompt";
 
 export default function AiWorkspaceUnderstanding({ realAiEnabled = false }) {
@@ -96,6 +97,7 @@ export default function AiWorkspaceUnderstanding({ realAiEnabled = false }) {
           <WorkspacePlanReview key={`${result.plan.workflowId}:${result.plan.variantId}:${result.plan.steps.map((step) => step.toolId).join(",")}`} plan={result.plan} />
         </section>
       )}
+      <WorkspaceHistoryPanel plan={result?.kind === "PLAN" ? result.plan : null} prompt={prompt} />
     </div>
   );
 }
