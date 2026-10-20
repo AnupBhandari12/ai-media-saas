@@ -105,6 +105,11 @@ export default function WorkflowHub() {
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">{workflow.name}</h3>
                 <p className="mt-2 min-h-12 text-sm leading-6 text-muted">{workflow.description}</p>
+                {workflow.id === "WF-06" && (
+                  <Link href="/workflows/website-ready" className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover">
+                    Try Website Ready (local beta) <ArrowRight size={17} aria-hidden="true" />
+                  </Link>
+                )}
                 <button
                   type="button" onClick={() => toggle(workflow)}
                   aria-expanded={open}
